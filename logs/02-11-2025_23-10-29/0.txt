@@ -1,0 +1,6 @@
+db_gino.py:41 #INFO     [2025-11-02 23:10:29,092] - tg_bot.db_models.db_gino - 0| Connecting to PostgreSQL...
+main.py:29 #INFO     [2025-11-02 23:10:29,892] - root - 0| Подгрузил proxies.txt! Количество прокси: 1
+dispatcher.py:566 #INFO     [2025-11-02 23:10:30,030] - aiogram.dispatcher - 0| Start polling
+dispatcher.py:363 #INFO     [2025-11-02 23:10:30,069] - aiogram.dispatcher - 0| Run polling for bot @amurbooking_test_bot id=8065319444 - 'amurbooking-bot'
+dispatcher.py:594 #INFO     [2025-11-02 23:10:38,495] - aiogram.dispatcher - 0| Polling stopped
+dispatcher.py:395 #INFO     [2025-11-02 23:10:38,495] - aiogram.dispatcher - 0| Polling stopped for bot @amurbooking_test_bot id=8065319444 - 'amurbooking-bot'

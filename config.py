@@ -1,0 +1,41 @@
+import os
+from logging import Logger
+from pathlib import Path
+from typing import Optional, Dict
+
+from aiogram import Bot, Dispatcher
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
+from aiogram.fsm.storage.memory import MemoryStorage
+from dotenv import load_dotenv
+from pytz import timezone
+
+load_dotenv(dotenv_path=".env")
+
+
+class Config:
+    BOT_TOKEN = os.getenv("BOT_TOKEN").strip()
+    BOT = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    DISPATCHER = Dispatcher(storage=MemoryStorage())
+
+    HEADLESS: bool = int(os.getenv("HEADLESS").strip())
+    ADMINS = list(map(int, os.getenv("ADMINS").strip().split(",")))
+    TIMEZONE = timezone(os.getenv("TIMEZONE").strip())
+    USE_PROXY: bool = int(os.getenv("USE_PROXY").strip())
+
+    INPUT_PROXIES: Optional[Dict] = None
+    PROXY_CURSOR = 0
+
+    logger: Optional[Logger] = None
+    LOGGING_DIR = Path(os.path.abspath("logs"))
+    DATETIME_FORMAT = "%d-%m-%Y_%H-%M-%S"
+
+    PROXIES_FILEPATH = Path(os.path.abspath("proxies.txt"))
+
+    BROWSER_PROCESSING_OBJ = None
+
+    DATABASE_CLEANUP = bool(int(os.getenv("DATABASE_CLEANUP")))
+    DB_USER = os.getenv("DB_USER").strip()
+    DB_PASSWORD = os.getenv("DB_PASSWORD").strip()
+    DB_HOST = os.getenv("DB_HOST").strip()
+    DB_NAME = os.getenv("DB_NAME").strip()
