@@ -19,6 +19,7 @@ class Account(TimedBaseModel):
     __tablename__ = prefix + "accounts"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    verified = Column(Boolean)
     phone = Column(String, primary_key=True)
     password = Column(String)
     proxy = Column(String)

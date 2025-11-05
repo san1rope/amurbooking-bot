@@ -7,9 +7,11 @@ from .schemas import *
 
 
 class DbAccount:
-    def __init__(self, db_id: Optional[int] = None, phone: Optional[str] = None, password: Optional[str] = None,
-                 proxy: Optional[str] = None, auth_token: Optional[str] = None, is_work: Optional[bool] = None):
+    def __init__(self, db_id: Optional[int] = None, verified: Optional[bool] = None, phone: Optional[str] = None,
+                 password: Optional[str] = None, proxy: Optional[str] = None, auth_token: Optional[str] = None,
+                 is_work: Optional[bool] = None):
         self.db_id = db_id
+        self.verified = verified
         self.phone = phone
         self.password = password
         self.proxy = proxy
@@ -20,7 +22,7 @@ class DbAccount:
         try:
             target = Account(
                 phone=self.phone, password=self.password, proxy=self.proxy, auth_token=self.auth_token,
-                is_work=self.is_work
+                is_work=self.is_work, verified=self.verified
             )
             return await target.create()
 
@@ -28,21 +30,26 @@ class DbAccount:
             Config.logger.error(ex)
             return False
 
-    async def select(self) -> Union[Account, List[Account], None, bool]:
+    async def select(self, proxy_not_none: bool = False) -> Union[Account, List[Account], None, bool]:
         try:
             q = Account.query
+
+            if proxy_not_none:
+                return await q.where(Account.proxy.isnot(None)).gino.all()
 
             if self.db_id is not None:
                 return await q.where(Account.id == self.db_id).gino.first()
 
-            elif self.phone is not None:
+            if self.phone is not None:
                 return await q.where(Account.phone == self.phone).gino.first()
 
-            elif self.is_work is not None:
+            if self.is_work is not None:
                 return await q.where(Account.is_work == self.is_work).gino.all()
 
-            else:
-                return await q.gino.all()
+            if self.verified is not None:
+                return await q.where(Account.verified == self.verified).gino.all()
+
+            return await q.gino.all()
 
         except Exception as ex:
             Config.logger.error(ex)

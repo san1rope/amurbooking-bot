@@ -1,3 +1,5 @@
+from typing import Union
+
 from aiogram import Router, F, types, enums
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.markdown import hcode
@@ -15,7 +17,7 @@ router = Router()
 @router.message(F.chat.type == enums.ChatType.PRIVATE, F.text == Dm.start_menu_btn_accounts_list)
 @router.callback_query(F.data == "back_to_acc_list")
 @router.callback_query(F.data == "move_to_accounts_list")
-async def show_accounts_list(message: [types.Message, types.CallbackQuery], state: FSMContext):
+async def show_accounts_list(message: Union[types.Message, types.CallbackQuery], state: FSMContext):
     uid = message.from_user.id
     Config.logger.info(f"Handler called. {show_accounts_list.__name__}. user_id={uid}")
 
@@ -92,7 +94,7 @@ async def add_account(callback: types.CallbackQuery, state: FSMContext):
 
 @router.message(AddAccountStates.WritePhone)
 @router.callback_query(F.data == "back_to_add_account_password")
-async def account_phone(message: [types.Message, types.CallbackQuery], state: FSMContext):
+async def account_phone(message: Union[types.Message, types.CallbackQuery], state: FSMContext):
     uid = message.from_user.id
     Config.logger.info(f"Handler called. {account_phone.__name__}. user_id={uid}")
 
@@ -159,13 +161,44 @@ async def confirm_add_account(callback: types.CallbackQuery, state: FSMContext):
     uid = callback.from_user.id
     Config.logger.info(f"Handler called. {confirm_add_account.__name__}. user_id={uid}")
 
-    text = [
-        "<b>➕ Добавление аккаунта</b>",
-        "\n<b>✅ Вы подтвердили данные для авторизации в аккаунт!</b>",
-        "\n<b>ℹ️ Теперь данные находятся в проверке на действительность. Ожидайте сообщения о успешном добавлении аккаунта!</b>"
-    ]
-    await Ut.send_step_message(
-        user_id=uid, text="\n".join(text), markup=await Im.markup_from_buttons([[Im.move_to_accounts_list_btn]])
-    )
+    data = await state.get_data()
+
+    accounts_with_proxy = await DbAccount().select(proxy_not_none=True)
+    attached_proxies = [acc.proxy for acc in accounts_with_proxy]
+
+    selected_proxy = None
+    for proxy_obj in Config.INPUT_PROXIES:
+        if str(proxy_obj) in attached_proxies:
+            continue
+
+        selected_proxy = str(proxy_obj)
+
+    if not selected_proxy:  # body in temp status!:
+        text = [
+            "<b>Не хватило прокси на этот аккаунт!</b>",
+            "<b>Обратитесь к администратору!</b>"
+        ]
+        await Ut.send_step_message(user_id=uid, text="\n".join(text))
+        await state.clear()
+        return
+
+    result = await DbAccount(phone=data['phone'], password=data['password'], proxy=selected_proxy).add()
+    if result:
+        text = [
+            "<b>➕ Добавление аккаунта</b>",
+            "\n<b>✅ Вы подтвердили данные для авторизации в аккаунт!</b>",
+            f"\n<b>📱 Телефон: {hcode(data['phone'])}</b>",
+            f"<b>🔐 Пароль: {hcode(data['password'])}</b>",
+            "\n<b>ℹ️ Теперь данные находятся в проверке на действительность. Ожидайте сообщения о успешном добавлении аккаунта!</b>"
+        ]
+        await Ut.send_step_message(
+            user_id=uid, text="\n".join(text), markup=await Im.markup_from_buttons([[Im.move_to_accounts_list_btn]])
+        )
+
+    else:
+        text = [
+            "<b>Не удалось добавить аккаунт в список проверки!</b>"
+        ]
+        await Ut.send_step_message(user_id=uid, text="\n".join(text))
 
     await state.clear()

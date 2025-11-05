@@ -5,6 +5,7 @@ from typing import Optional, Dict
 
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
+from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from dotenv import load_dotenv
@@ -14,8 +15,11 @@ load_dotenv(dotenv_path=".env")
 
 
 class Config:
+    AIOHTTP_SESSION = AiohttpSession("http://valetinles:f5bay87SBb@31.59.236.40:59100")
+
     BOT_TOKEN = os.getenv("BOT_TOKEN").strip()
-    BOT = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    BOT = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML),
+              session=AIOHTTP_SESSION)
     DISPATCHER = Dispatcher(storage=MemoryStorage())
 
     HEADLESS: bool = int(os.getenv("HEADLESS").strip())
