@@ -1,19 +1,28 @@
 from aiogram import Router, F, types, enums
+from aiogram.fsm.context import FSMContext
 from aiogram.utils.markdown import hcode
 
 from config import Config
 from tg_bot.db_models.quick_commands import DbAccount
 from tg_bot.keyboards.default import DefaultMarkups as Dm
 from tg_bot.keyboards.inline import InlineMarkups as Im
+from tg_bot.misc.states import AddAccountStates
 from tg_bot.misc.utils import Utils as Ut
 
 router = Router()
 
 
 @router.message(F.chat.type == enums.ChatType.PRIVATE, F.text == Dm.start_menu_btn_accounts_list)
-async def show_accounts_list(message: types.Message):
+@router.callback_query(F.data == "back_to_acc_list")
+@router.callback_query(F.data == "move_to_accounts_list")
+async def show_accounts_list(message: [types.Message, types.CallbackQuery], state: FSMContext):
     uid = message.from_user.id
     Config.logger.info(f"Handler called. {show_accounts_list.__name__}. user_id={uid}")
+
+    await state.clear()
+    if isinstance(message, types.CallbackQuery):
+        await message.answer()
+        message = message.message
 
     db_accounts = await DbAccount().select()
     if not db_accounts:
@@ -49,7 +58,7 @@ async def show_accounts_list(message: types.Message):
         "<b>❇️ Список добавленных аккаунтов</b>",
         f"\n<b>ℹ️ Количество аккаунтов: {len(db_accounts)}</b>",
         f"<b>👨‍💻 В работе: {is_work_counter}</b>",
-        "\n<b>Используйте клавиатуры под сообщениями ⬇️</b>"
+        "\n<b>Используйте кнопки под сообщениями ⬇️</b>"
     ]
 
     await Ut.send_step_message(
@@ -62,7 +71,101 @@ async def show_accounts_list(message: types.Message):
 
 
 @router.callback_query(F.data == "add_account")
-async def add_account(callback: types.CallbackQuery):
+@router.callback_query(F.data == "back_to_add_account_phone")
+async def add_account(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
     uid = callback.from_user.id
     Config.logger.info(f"Handler called. {add_account.__name__}. user_id={uid}")
+
+    text = [
+        "<b>➕ Добавление аккаунта</b>",
+        "\n<b>Введите номер телефона для авторизации в аккаунт</b>",
+        "\n<b>ℹ️ Номер телефона должен быть полным!</b>"
+    ]
+    await Ut.send_step_message(
+        user_id=uid, text="\n".join(text),
+        markup=await Im.markup_from_buttons([[await Im.get_back_btn("back_to_acc_list")]])
+    )
+
+    await state.set_state(AddAccountStates.WritePhone)
+
+
+@router.message(AddAccountStates.WritePhone)
+@router.callback_query(F.data == "back_to_add_account_password")
+async def account_phone(message: [types.Message, types.CallbackQuery], state: FSMContext):
+    uid = message.from_user.id
+    Config.logger.info(f"Handler called. {account_phone.__name__}. user_id={uid}")
+
+    if isinstance(message, types.CallbackQuery):
+        await message.answer()
+
+    else:
+        phone = message.text.strip().replace("+", "")
+        if len(phone) < 6:
+            text = [
+                "<b>🔴 Номер телефона не может быть таким коротким!</b>",
+                "<b>Попробуйте ещё раз!</b>"
+            ]
+            msg = await message.answer(text="\n".join(text))
+            await Ut.add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
+            return
+
+        await state.update_data(phone="+" + phone)
+
+    text = [
+        "<b>➕ Добавление аккаунта</b>",
+        "\n<b>Теперь вам нужно ввести пароль к аккаунту</b>"
+    ]
+    await Ut.send_step_message(
+        user_id=uid, text="\n".join(text),
+        markup=await Im.markup_from_buttons([[await Im.get_back_btn("back_to_add_account_phone")]])
+    )
+
+    await state.set_state(AddAccountStates.WritePassword)
+
+
+@router.message(AddAccountStates.WritePassword)
+async def account_password(message: types.Message, state: FSMContext):
+    uid = message.from_user.id
+    Config.logger.info(f"Handler called. {account_password.__name__}. user_id={uid}")
+
+    data = await state.get_data()
+    phone = data["phone"]
+    password = message.text.strip()
+    await state.update_data(password=password)
+
+    text = [
+        "<b>➕ Добавление аккаунта</b>",
+        "\n<b>Проверьте действительность данных для авторизации:</b>",
+        f"\n<b>📱 Телефон: {hcode(phone)}</b>",
+        f"<b>🔐 Пароль: {hcode(password)}</b>",
+        "\n<b>ℹ️ После подтверждения вами данных, бот выполнит проверочную авторизацию в аккаунт перед добавлением информации в базу данных</b>",
+        "\n<b>Используйте кнопки под сообщением ⬇️</b>"
+    ]
+    await Ut.send_step_message(
+        user_id=uid, text="\n".join(text),
+        markup=await Im.markup_from_buttons([
+            [await Im.get_confirm_btn("confirm_add_account")],
+            [await Im.get_back_btn("back_to_add_account_password")],
+        ])
+    )
+
+    await state.set_state(AddAccountStates.Confirmation)
+
+
+@router.callback_query(F.data == "confirm_add_account")
+async def confirm_add_account(callback: types.CallbackQuery, state: FSMContext):
+    await callback.answer()
+    uid = callback.from_user.id
+    Config.logger.info(f"Handler called. {confirm_add_account.__name__}. user_id={uid}")
+
+    text = [
+        "<b>➕ Добавление аккаунта</b>",
+        "\n<b>✅ Вы подтвердили данные для авторизации в аккаунт!</b>",
+        "\n<b>ℹ️ Теперь данные находятся в проверке на действительность. Ожидайте сообщения о успешном добавлении аккаунта!</b>"
+    ]
+    await Ut.send_step_message(
+        user_id=uid, text="\n".join(text), markup=await Im.markup_from_buttons([[Im.move_to_accounts_list_btn]])
+    )
+
+    await state.clear()

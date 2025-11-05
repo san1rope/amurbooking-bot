@@ -12,6 +12,11 @@ class CustomCallback(CallbackData, prefix="cc"):
 class InlineMarkups:
     back_to_menu_btn = InlineKeyboardButton(text="⌨️ В меню", callback_data="back_to_menu")
     add_account_btn = InlineKeyboardButton(text="➕ Добавить аккаунт", callback_data="add_account")
+    move_to_accounts_list_btn = InlineKeyboardButton(text="В список аккаунтов", callback_data="move_to_accounts_list")
+
+    @staticmethod
+    async def get_confirm_btn(callback_data: str) -> InlineKeyboardButton:
+        return InlineKeyboardButton(text="✅ Подтвердить", callback_data=callback_data)
 
     @staticmethod
     async def get_back_btn(callback_data: str) -> InlineKeyboardButton:
