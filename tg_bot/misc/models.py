@@ -1,10 +1,14 @@
-from typing import Any, Optional
+from typing import Optional, Any
 
 from pydantic import BaseModel
 
 
+class QueueMessage(BaseModel):
+    msg_type: str
+    data: Any = None
+
+
 class ProxyData(BaseModel):
-    id: int
     host: str
     port: str
     username: Optional[str] = None
@@ -13,3 +17,7 @@ class ProxyData(BaseModel):
 
     def __str__(self):
         return f"{self.host}:{self.port}:{self.username}:{self.password}"
+
+
+class WorkTypes:
+    ACCOUNT_VERIFY = "account_verify"

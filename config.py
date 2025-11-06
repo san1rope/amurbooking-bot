@@ -1,7 +1,7 @@
 import os
 from logging import Logger
 from pathlib import Path
-from typing import Optional, Dict
+from typing import Optional, List
 
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
@@ -27,8 +27,7 @@ class Config:
     TIMEZONE = timezone(os.getenv("TIMEZONE").strip())
     USE_PROXY: bool = int(os.getenv("USE_PROXY").strip())
 
-    INPUT_PROXIES: Optional[Dict] = None
-    PROXY_CURSOR = 0
+    INPUT_PROXIES: Optional[List] = None
 
     logger: Optional[Logger] = None
     LOGGING_DIR = Path(os.path.abspath("logs"))

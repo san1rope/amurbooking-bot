@@ -2,7 +2,7 @@ import os
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Union, Dict, Optional
+from typing import Union, Dict, Optional, List
 
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import InlineKeyboardMarkup
@@ -87,13 +87,13 @@ class Utils:
         return logger
 
     @staticmethod
-    async def load_proxies() -> Dict[int, ProxyData]:
+    async def load_proxies() -> List[ProxyData]:
         Config.PROXIES_FILEPATH.parent.mkdir(exist_ok=True, parents=True)
         Config.PROXIES_FILEPATH.touch(exist_ok=True)
 
         with open(Config.PROXIES_FILEPATH, "r", encoding="utf-8") as file:
             proxies = file.read().split("\n")
-            proxies_objs = {}
+            proxies_objs = []
 
             for proxy, proxy_id in zip(proxies, range(1, len(proxies) + 1)):
                 try:
@@ -108,8 +108,10 @@ class Utils:
                         Config.logger.error(f"Прокси указано в неверном формате: {proxy}")
                         continue
 
-                proxies_objs[len(proxies_objs)] = ProxyData(
-                    id=proxy_id, host=host, port=port, username=username, password=password
-                )
+                # proxies_objs[len(proxies_objs)] = ProxyData(
+                #     id=proxy_id, host=host, port=port, username=username, password=password
+                # )
+
+                proxies_objs.append(ProxyData(host=host, port=port, username=username, password=password))
 
         return proxies_objs

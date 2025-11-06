@@ -26,7 +26,7 @@ async def show_accounts_list(message: Union[types.Message, types.CallbackQuery],
         await message.answer()
         message = message.message
 
-    db_accounts = await DbAccount().select()
+    db_accounts = await DbAccount(verified=True).select()
     if not db_accounts:
         text = [
             "<b>ℹ️ У вас нету сохраненных аккаунтов!</b>",
@@ -172,6 +172,10 @@ async def confirm_add_account(callback: types.CallbackQuery, state: FSMContext):
             continue
 
         selected_proxy = str(proxy_obj)
+        print(f"selected_proxy = {selected_proxy}")
+        print(f"attached_proxies = {attached_proxies}")
+        print(f"proxy_obj = {proxy_obj}")
+        break
 
     if not selected_proxy:  # body in temp status!:
         text = [
