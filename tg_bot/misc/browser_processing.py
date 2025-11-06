@@ -28,9 +28,6 @@ class BrowserProcessing:
         self.ACCOUNT_ID = account_id
         self.QUEUE_OUT = queue_out
 
-    async def account_verify_thread(self):
-        Config.logger.info("Поток проверки аккаунтов запущен!")
-
     async def auth(self) -> bool:
         await self.PL_PAGE_WORKER.evaluate("localStorage.clear()")
         await self.PL_PAGE_WORKER.goto("https://amurbooking.com/user/login", timeout=20000)

@@ -7,11 +7,11 @@ from .schemas import *
 
 
 class DbAccount:
-    def __init__(self, db_id: Optional[int] = None, verified: Optional[bool] = None, phone: Optional[str] = None,
-                 password: Optional[str] = None, proxy: Optional[str] = None, auth_token: Optional[str] = None,
-                 is_work: Optional[bool] = None):
+    def __init__(
+            self, db_id: Optional[int] = None, phone: Optional[str] = None, password: Optional[str] = None,
+            proxy: Optional[str] = None, auth_token: Optional[str] = None, is_work: Optional[bool] = None
+    ):
         self.db_id = db_id
-        self.verified = verified
         self.phone = phone
         self.password = password
         self.proxy = proxy
@@ -22,7 +22,7 @@ class DbAccount:
         try:
             target = Account(
                 phone=self.phone, password=self.password, proxy=self.proxy, auth_token=self.auth_token,
-                is_work=self.is_work, verified=self.verified
+                is_work=self.is_work
             )
             return await target.create()
 
@@ -46,9 +46,6 @@ class DbAccount:
             if self.is_work is not None:
                 return await q.where(Account.is_work == self.is_work).gino.all()
 
-            if self.verified is not None:
-                return await q.where(Account.verified == self.verified).gino.all()
-
             return await q.gino.all()
 
         except Exception as ex:
@@ -61,7 +58,7 @@ class DbAccount:
                 return False
 
             target = await self.select()
-            return await target.update(**kwargs).apply()
+            return bool(await target.update(**kwargs).apply())
 
         except Exception as ex:
             Config.logger.error(ex)
@@ -70,7 +67,7 @@ class DbAccount:
     async def remove(self) -> bool:
         try:
             target = await self.select()
-            return await target.delete()
+            return bool(await target.delete())
 
         except Exception as ex:
             Config.logger.error(ex)
@@ -109,3 +106,23 @@ class DbMessageId:
         except Exception as ex:
             Config.logger.error(ex)
             return False
+
+
+class DbBooking:
+    def __init__(self, db_id: Optional[int] = None):
+        self.db_id = db_id
+
+    async def add(self) -> Union[Booking, bool]:
+        try:
+            target = Booking()
+            return await target.create()
+
+        except UniqueViolationError as ex:
+            Config.logger.error(ex)
+            return False
+
+    async def select(self):
+        pass
+
+    async def update(self):
+        pass

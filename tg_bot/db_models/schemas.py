@@ -19,11 +19,18 @@ class Account(TimedBaseModel):
     __tablename__ = prefix + "accounts"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    verified = Column(Boolean)
     phone = Column(String, primary_key=True)
     password = Column(String)
     proxy = Column(String)
     auth_token = Column(String)
     is_work = Column(Boolean, default=False)
+
+    query: sql.Select
+
+
+class Booking(TimedBaseModel):
+    __tablename__ = prefix + "bookings"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
     query: sql.Select

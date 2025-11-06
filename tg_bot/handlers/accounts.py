@@ -7,7 +7,7 @@ from aiogram.utils.markdown import hcode
 from config import Config
 from tg_bot.db_models.quick_commands import DbAccount
 from tg_bot.keyboards.default import DefaultMarkups as Dm
-from tg_bot.keyboards.inline import InlineMarkups as Im
+from tg_bot.keyboards.inline import InlineMarkups as Im, CustomCallback
 from tg_bot.misc.states import AddAccountStates
 from tg_bot.misc.utils import Utils as Ut
 
@@ -26,7 +26,7 @@ async def show_accounts_list(message: Union[types.Message, types.CallbackQuery],
         await message.answer()
         message = message.message
 
-    db_accounts = await DbAccount(verified=True).select()
+    db_accounts = await DbAccount().select()
     if not db_accounts:
         text = [
             "<b>ℹ️ У вас нету сохраненных аккаунтов!</b>",
@@ -70,6 +70,68 @@ async def show_accounts_list(message: Union[types.Message, types.CallbackQuery],
     for acc_text, acc_markup in acc_texts:
         msg = await message.answer(text=acc_text, reply_markup=acc_markup, disable_web_page_preview=True)
         await Ut.add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
+
+
+@router.callback_query(CustomCallback.filter(F.role == "delete_account"))
+async def delete_account(callback: types.CallbackQuery, callback_data: CustomCallback):
+    await callback.answer()
+    uid = callback.from_user.id
+    Config.logger.info(f"Handler called. {delete_account.__name__}. user_id={uid}")
+
+    db_acc = await DbAccount(db_id=int(callback_data.data)).select()
+    if not db_acc:
+        await callback.message.edit_text(text="<b>⚠️ Ошибка! Акканта не существует!</b>")
+        return
+
+    text = [
+        f"<b>Вы действительно желаете удалить аккаунт №{hcode(db_acc.id)}?</b>",
+        f"\n<b>📱 Телефон: {hcode(db_acc.phone)}</b>",
+        f"<b>🔐 Пароль: {hcode(db_acc.password)}</b>",
+        "\n<b>Используйте кнопки под сообщением ⬇️</b>"
+    ]
+    await callback.message.edit_text(
+        text="\n".join(text), disable_web_page_preview=True,
+        reply_markup=await Im.markup_from_buttons([
+            [await Im.get_confirm_btn(custom_data=str(db_acc.id), callback_data="delete_account_confirm")],
+            [await Im.get_back_btn(custom_data=str(db_acc.id), callback_data="delete_account_back")]
+        ])
+    )
+
+
+@router.callback_query(CustomCallback.filter(F.role == "delete_account_back"))
+async def delete_account_cancel(callback: types.CallbackQuery, callback_data: CustomCallback):
+    await callback.answer()
+    uid = callback.from_user.id
+    Config.logger.info(f"Handler called. {delete_account_cancel.__name__}. user_id={uid}")
+
+    db_acc = await DbAccount(db_id=int(callback_data.data)).select()
+    if not db_acc:
+        await callback.message.edit_text(text="<b>⚠️ Ошибка! Акканта не существует!</b>")
+        return
+
+    text = [
+        f"<b>🆔 Аккаунт №{hcode(str(db_acc.id))}</b>",
+        f"\n<b>📱 Телефон: {hcode(db_acc.phone)}</b>",
+        f"<b>🔐 Пароль: {hcode(db_acc.password)}</b>",
+        f"<b>🖥 Прокси: {hcode(db_acc.proxy)}</b>",
+        f"<b>👨‍💻 В работе: {'Да' if db_acc.is_work else 'Нет'}</b>"
+    ]
+    markup = await Im.markup_from_buttons([[await Im.get_delete_account_btn(db_acc.id)]])
+    await callback.message.edit_text(text="\n".join(text), reply_markup=markup, disable_web_page_preview=True)
+
+
+@router.callback_query(CustomCallback.filter(F.role == "delete_account_confirm"))
+async def delete_account_confirm(callback: types.CallbackQuery, callback_data: CustomCallback):
+    await callback.answer()
+    uid = callback.from_user.id
+    Config.logger.info(f"Handler called. {delete_account_confirm.__name__}. user_id={uid}")
+
+    result = await DbAccount(db_id=int(callback_data.data)).remove()
+    if result:
+        await callback.message.edit_text(text="<b>✅ Вы удалили аккаунт!</b>")
+
+    else:
+        await callback.message.edit_text(text="<b>🔴 Не удалось удалить аккаунт!</b>")
 
 
 @router.callback_query(F.data == "add_account")
@@ -141,7 +203,7 @@ async def account_password(message: types.Message, state: FSMContext):
         "\n<b>Проверьте действительность данных для авторизации:</b>",
         f"\n<b>📱 Телефон: {hcode(phone)}</b>",
         f"<b>🔐 Пароль: {hcode(password)}</b>",
-        "\n<b>ℹ️ После подтверждения вами данных, бот выполнит проверочную авторизацию в аккаунт перед добавлением информации в базу данных</b>",
+        # "\n<b>ℹ️ После подтверждения вами данных, бот выполнит проверочную авторизацию в аккаунт перед добавлением информации в базу данных</b>",
         "\n<b>Используйте кнопки под сообщением ⬇️</b>"
     ]
     await Ut.send_step_message(
@@ -172,15 +234,12 @@ async def confirm_add_account(callback: types.CallbackQuery, state: FSMContext):
             continue
 
         selected_proxy = str(proxy_obj)
-        print(f"selected_proxy = {selected_proxy}")
-        print(f"attached_proxies = {attached_proxies}")
-        print(f"proxy_obj = {proxy_obj}")
         break
 
-    if not selected_proxy:  # body in temp status!:
+    if not selected_proxy:
         text = [
-            "<b>Не хватило прокси на этот аккаунт!</b>",
-            "<b>Обратитесь к администратору!</b>"
+            "<b>⚠️ Недостаточно прокси на этот аккаунт!</b>",
+            "\n<b>ℹ️ Обратитесь к администратору!</b>"
         ]
         await Ut.send_step_message(user_id=uid, text="\n".join(text))
         await state.clear()
@@ -192,8 +251,7 @@ async def confirm_add_account(callback: types.CallbackQuery, state: FSMContext):
             "<b>➕ Добавление аккаунта</b>",
             "\n<b>✅ Вы подтвердили данные для авторизации в аккаунт!</b>",
             f"\n<b>📱 Телефон: {hcode(data['phone'])}</b>",
-            f"<b>🔐 Пароль: {hcode(data['password'])}</b>",
-            "\n<b>ℹ️ Теперь данные находятся в проверке на действительность. Ожидайте сообщения о успешном добавлении аккаунта!</b>"
+            f"<b>🔐 Пароль: {hcode(data['password'])}</b>"
         ]
         await Ut.send_step_message(
             user_id=uid, text="\n".join(text), markup=await Im.markup_from_buttons([[Im.move_to_accounts_list_btn]])
@@ -201,8 +259,12 @@ async def confirm_add_account(callback: types.CallbackQuery, state: FSMContext):
 
     else:
         text = [
-            "<b>Не удалось добавить аккаунт в список проверки!</b>"
+            "<b>🔴 Не удалось записать аккаунт в базу данных!</b>",
+            "\n<b>ℹ️ Попробуйте ещё раз, либо обратитесь к администратору!</b>"
         ]
-        await Ut.send_step_message(user_id=uid, text="\n".join(text))
+        await Ut.send_step_message(
+            user_id=uid, text="\n".join(text),
+            markup=await Im.markup_from_buttons([[Im.add_account_btn], [Im.move_to_accounts_list_btn]])
+        )
 
     await state.clear()

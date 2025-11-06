@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -15,11 +15,17 @@ class InlineMarkups:
     move_to_accounts_list_btn = InlineKeyboardButton(text="В список аккаунтов", callback_data="move_to_accounts_list")
 
     @staticmethod
-    async def get_confirm_btn(callback_data: str) -> InlineKeyboardButton:
+    async def get_confirm_btn(callback_data: str, custom_data: Optional[str] = None) -> InlineKeyboardButton:
+        if custom_data:
+            callback_data = CustomCallback(role=callback_data, data=str(custom_data)).pack()
+
         return InlineKeyboardButton(text="✅ Подтвердить", callback_data=callback_data)
 
     @staticmethod
-    async def get_back_btn(callback_data: str) -> InlineKeyboardButton:
+    async def get_back_btn(callback_data: str, custom_data: Optional[str] = None) -> InlineKeyboardButton:
+        if custom_data:
+            callback_data = CustomCallback(role=callback_data, data=str(custom_data)).pack()
+
         return InlineKeyboardButton(text="🔙 Назад", callback_data=callback_data)
 
     @staticmethod
