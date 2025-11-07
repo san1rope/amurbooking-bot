@@ -1,4 +1,4 @@
-from sqlalchemy import Column, sql, Integer, String, BigInteger, Boolean
+from sqlalchemy import Column, sql, Integer, String, BigInteger, Boolean, DateTime
 
 from tg_bot.db_models.db_gino import TimedBaseModel
 
@@ -32,5 +32,10 @@ class Booking(TimedBaseModel):
     __tablename__ = prefix + "bookings"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    status = Column(Integer, nullable=False) # 0 - in work; 1 - completed; 2 - cant book;
+    truck = Column(String, nullable=False)
+    good_character = Column(String, nullable=False)
+    book_date = Column(DateTime, nullable=False)
+    time_duration = Column(Integer, default=0)
 
     query: sql.Select

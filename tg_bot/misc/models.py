@@ -3,6 +3,10 @@ from typing import Optional, Any
 from pydantic import BaseModel
 
 
+class WorkTypes:
+    GET_TRUCKS_LIST = "get_trucks_list"
+
+
 class QueueMessage(BaseModel):
     msg_type: str
     data: Any = None

@@ -13,6 +13,7 @@ class InlineMarkups:
     back_to_menu_btn = InlineKeyboardButton(text="⌨️ В меню", callback_data="back_to_menu")
     add_account_btn = InlineKeyboardButton(text="➕ Добавить аккаунт", callback_data="add_account")
     move_to_accounts_list_btn = InlineKeyboardButton(text="В список аккаунтов", callback_data="move_to_accounts_list")
+    add_booking_btn = InlineKeyboardButton(text="➕ Добавить заявку", callback_data="add_booking")
 
     @staticmethod
     async def get_confirm_btn(callback_data: str, custom_data: Optional[str] = None) -> InlineKeyboardButton:
@@ -33,6 +34,13 @@ class InlineMarkups:
         return InlineKeyboardButton(
             text="🗑 Удалить аккаунт",
             callback_data=CustomCallback(role="delete_account", data=str(account_id)).pack()
+        )
+
+    @staticmethod
+    async def get_delete_booking_btn(booking_id: int) -> InlineKeyboardButton:
+        return InlineKeyboardButton(
+            text="🗑 Удалить запись",
+            callback_data=CustomCallback(role="delete_booking", data=str(booking_id)).pack()
         )
 
     @staticmethod

@@ -40,7 +40,6 @@ async def show_accounts_list(message: Union[types.Message, types.CallbackQuery],
         return
 
     acc_texts = []
-
     is_work_counter = 0
     for db_acc in db_accounts:
         is_work_counter += 1 if db_acc.is_work else 0

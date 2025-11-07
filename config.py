@@ -35,8 +35,6 @@ class Config:
 
     PROXIES_FILEPATH = Path(os.path.abspath("proxies.txt"))
 
-    BROWSER_PROCESSING_OBJ = None
-
     DATABASE_CLEANUP = bool(int(os.getenv("DATABASE_CLEANUP")))
     DB_USER = os.getenv("DB_USER").strip()
     DB_PASSWORD = os.getenv("DB_PASSWORD").strip()

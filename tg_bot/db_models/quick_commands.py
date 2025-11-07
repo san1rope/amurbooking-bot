@@ -1,4 +1,5 @@
 from typing import Optional, Union, List
+from datetime import datetime
 
 from asyncpg import UniqueViolationError
 
@@ -109,20 +110,60 @@ class DbMessageId:
 
 
 class DbBooking:
-    def __init__(self, db_id: Optional[int] = None):
+    def __init__(
+            self, db_id: Optional[int] = None, status: Optional[int] = None, truck: Optional[str] = None,
+            good_character: Optional[int] = None, book_date: Optional[datetime] = None,
+            time_duration: Optional[str] = None
+    ):
         self.db_id = db_id
+        self.status = status
+        self.truck = truck
+        self.good_character = good_character
+        self.book_date = book_date
+        self.time_duration = time_duration
 
     async def add(self) -> Union[Booking, bool]:
         try:
-            target = Booking()
+            target = Booking(status=self.status, truck=self.truck, good_character=self.good_character,
+                             book_date=self.book_date, time_duration=self.time_duration)
             return await target.create()
 
         except UniqueViolationError as ex:
             Config.logger.error(ex)
             return False
 
-    async def select(self):
-        pass
+    async def select(self) -> Union[Booking, List[Booking], None, bool]:
+        try:
+            q = Booking.query
+            if self.db_id is not None:
+                return await q.where(Booking.id == self.db_id).gino.first()
 
-    async def update(self):
-        pass
+            if self.status is not None:
+                return await q.where(Booking.status == self.status).gino.all()
+
+            return await q.gino.all()
+
+        except Exception as ex:
+            Config.logger.error(ex)
+            return False
+
+    async def update(self, **kwargs) -> bool:
+        try:
+            if not kwargs:
+                return False
+
+            target = await self.select()
+            return bool(await target.update(**kwargs).apply())
+
+        except Exception as ex:
+            Config.logger.error(ex)
+            return False
+
+    async def remove(self) -> bool:
+        try:
+            target = await self.select()
+            return bool(await target.delete())
+
+        except Exception as ex:
+            Config.logger.error(ex)
+            return False

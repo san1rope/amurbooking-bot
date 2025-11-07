@@ -1,6 +1,5 @@
 import asyncio
 from datetime import datetime
-from multiprocessing import Queue
 
 from aiogram.types import BotCommand
 
@@ -14,7 +13,6 @@ async def main():
     datetime_of_start = datetime.now(tz=Config.TIMEZONE).strftime(Config.DATETIME_FORMAT)
     logger = await Ut.add_logging(datetime_of_start=datetime_of_start, process_id=0)
     Config.logger = logger
-    Config.QUEUE = Queue()
 
     await connect_to_db(remove_data=Config.DATABASE_CLEANUP)
 

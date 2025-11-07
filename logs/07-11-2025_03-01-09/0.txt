@@ -1,0 +1,84 @@
+db_gino.py:41 #INFO     [2025-11-07 03:01:09,170] - tg_bot.db_models.db_gino - 0| Connecting to PostgreSQL...
+base.py:1234 #INFO     [2025-11-07 03:01:09,759] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-07 03:01:09,760] - gino.engine._SAEngine - 0| ('amurbooking_bot_messages',)
+result.py:809 #DEBUG    [2025-11-07 03:01:09,765] - gino.engine._SAEngine - 0| Col ('relname',)
+result.py:1260 #DEBUG    [2025-11-07 03:01:09,765] - gino.engine._SAEngine - 0| Row ('amurbooking_bot_messages',)
+base.py:1234 #INFO     [2025-11-07 03:01:09,765] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-07 03:01:09,765] - gino.engine._SAEngine - 0| ('amurbooking_bot_accounts',)
+result.py:809 #DEBUG    [2025-11-07 03:01:09,766] - gino.engine._SAEngine - 0| Col ('relname',)
+result.py:1260 #DEBUG    [2025-11-07 03:01:09,766] - gino.engine._SAEngine - 0| Row ('amurbooking_bot_accounts',)
+base.py:1234 #INFO     [2025-11-07 03:01:09,766] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-07 03:01:09,766] - gino.engine._SAEngine - 0| ('amurbooking_bot_bookings',)
+result.py:809 #DEBUG    [2025-11-07 03:01:09,767] - gino.engine._SAEngine - 0| Col ('relname',)
+base.py:1234 #INFO     [2025-11-07 03:01:09,767] - gino.engine._SAEngine - 0| 
+DROP TABLE amurbooking_bot_accounts
+base.py:1236 #INFO     [2025-11-07 03:01:09,767] - gino.engine._SAEngine - 0| ()
+base.py:769 #INFO     [2025-11-07 03:01:09,767] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-07 03:01:09,777] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-07 03:01:09,778] - gino.engine._SAEngine - 0| 
+DROP TABLE amurbooking_bot_messages
+base.py:1236 #INFO     [2025-11-07 03:01:09,778] - gino.engine._SAEngine - 0| ()
+base.py:769 #INFO     [2025-11-07 03:01:09,778] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-07 03:01:09,782] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-07 03:01:09,783] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-07 03:01:09,783] - gino.engine._SAEngine - 0| ('amurbooking_bot_messages',)
+result.py:809 #DEBUG    [2025-11-07 03:01:09,784] - gino.engine._SAEngine - 0| Col ('relname',)
+base.py:1234 #INFO     [2025-11-07 03:01:09,784] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-07 03:01:09,784] - gino.engine._SAEngine - 0| ('amurbooking_bot_accounts',)
+result.py:809 #DEBUG    [2025-11-07 03:01:09,785] - gino.engine._SAEngine - 0| Col ('relname',)
+base.py:1234 #INFO     [2025-11-07 03:01:09,785] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-07 03:01:09,785] - gino.engine._SAEngine - 0| ('amurbooking_bot_bookings',)
+result.py:809 #DEBUG    [2025-11-07 03:01:09,786] - gino.engine._SAEngine - 0| Col ('relname',)
+base.py:1234 #INFO     [2025-11-07 03:01:09,786] - gino.engine._SAEngine - 0| 
+CREATE TABLE amurbooking_bot_messages (
+	id BIGSERIAL NOT NULL, 
+	tg_user_id BIGINT NOT NULL, 
+	telegram_id BIGINT NOT NULL, 
+	created_at TIMESTAMP WITH TIME ZONE DEFAULT now(), 
+	updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(), 
+	PRIMARY KEY (id)
+)
+
+
+base.py:1236 #INFO     [2025-11-07 03:01:09,786] - gino.engine._SAEngine - 0| ()
+base.py:769 #INFO     [2025-11-07 03:01:09,786] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-07 03:01:09,796] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-07 03:01:09,796] - gino.engine._SAEngine - 0| 
+CREATE TABLE amurbooking_bot_accounts (
+	id SERIAL NOT NULL, 
+	phone VARCHAR NOT NULL, 
+	password VARCHAR, 
+	proxy VARCHAR, 
+	auth_token VARCHAR, 
+	is_work BOOLEAN, 
+	created_at TIMESTAMP WITH TIME ZONE DEFAULT now(), 
+	updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(), 
+	PRIMARY KEY (id, phone)
+)
+
+
+base.py:1236 #INFO     [2025-11-07 03:01:09,796] - gino.engine._SAEngine - 0| ()
+base.py:769 #INFO     [2025-11-07 03:01:09,797] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-07 03:01:09,802] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-07 03:01:09,803] - gino.engine._SAEngine - 0| 
+CREATE TABLE amurbooking_bot_bookings (
+	id SERIAL NOT NULL, 
+	status INTEGER NOT NULL, 
+	truck VARCHAR NOT NULL, 
+	good_character VARCHAR NOT NULL, 
+	book_date TIMESTAMP WITHOUT TIME ZONE NOT NULL, 
+	time_duration INTEGER, 
+	created_at TIMESTAMP WITH TIME ZONE DEFAULT now(), 
+	updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(), 
+	PRIMARY KEY (id)
+)
+
+
+base.py:1236 #INFO     [2025-11-07 03:01:09,803] - gino.engine._SAEngine - 0| ()
+base.py:769 #INFO     [2025-11-07 03:01:09,803] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-07 03:01:09,808] - gino.engine._SAEngine - 0| Col ()
+main.py:31 #INFO     [2025-11-07 03:01:09,816] - root - 0| Подгрузил proxies.txt! Количество прокси: 1
+dispatcher.py:566 #INFO     [2025-11-07 03:01:10,035] - aiogram.dispatcher - 0| Start polling
+dispatcher.py:363 #INFO     [2025-11-07 03:01:10,079] - aiogram.dispatcher - 0| Run polling for bot @amurbooking_test_bot id=8065319444 - 'amurbooking-bot'
+dispatcher.py:395 #INFO     [2025-11-07 03:01:11,808] - aiogram.dispatcher - 0| Polling stopped for bot @amurbooking_test_bot id=8065319444 - 'amurbooking-bot'
+dispatcher.py:594 #INFO     [2025-11-07 03:01:11,808] - aiogram.dispatcher - 0| Polling stopped
