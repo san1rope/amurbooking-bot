@@ -6,9 +6,10 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.markdown import hcode
 
 from config import Config
-from tg_bot.db_models.quick_commands import DbBooking
+from tg_bot.db_models.quick_commands import DbBooking, DbAccount
 from tg_bot.keyboards.default import DefaultMarkups as Dm
 from tg_bot.keyboards.inline import InlineMarkups as Im, CustomCallback
+from tg_bot.misc.browser_processing import BrowserProcessing
 from tg_bot.misc.states import AddBookingStates
 from tg_bot.misc.utils import Utils as Ut
 
@@ -136,6 +137,27 @@ async def add_booking(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
     uid = callback.from_user.id
     Config.logger.info(f"Handler called. {add_booking.__name__}. user_id={uid}")
+
+    text = [
+        "<b>➕ Добавление записи на бронь</b>",
+        "\n<b>Вам нужно выбрать аккаунт с которого бот будет ловить бронь</b>",
+        "\n<b>Используйте кнопки под сообщением ⬇️</b>"
+    ]
+
+    db_accounts = await DbAccount(is_work=False).select()
+    await Ut.send_step_message(
+        user_id=uid, text="\n".join(text),
+        markup=None
+    )
+
+    await state.set_state(AddBookingStates.SelectAccount)
+
+
+@router.callback_query()
+async def select_account(callback: types.CallbackQuery, state: FSMContext):
+    await callback.answer()
+    uid = callback.from_user.id
+    Config.logger.info(f"Handler called. {select_account.__name__}. user_id={uid}")
 
     text = [
         "<b>➕ Добавление записи на бронь</b>",

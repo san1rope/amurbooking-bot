@@ -8,6 +8,7 @@ class AddAccountStates(StatesGroup):
 
 
 class AddBookingStates(StatesGroup):
+    SelectAccount = State()
     SelectTruck = State()
     SelectGoodCharacter = State()
     SelectDate = State()

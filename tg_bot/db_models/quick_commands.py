@@ -10,7 +10,8 @@ from .schemas import *
 class DbAccount:
     def __init__(
             self, db_id: Optional[int] = None, phone: Optional[str] = None, password: Optional[str] = None,
-            proxy: Optional[str] = None, auth_token: Optional[str] = None, is_work: Optional[bool] = None
+            proxy: Optional[str] = None, auth_token: Optional[str] = None, is_work: Optional[bool] = None,
+            status: Optional[int] = None
     ):
         self.db_id = db_id
         self.phone = phone

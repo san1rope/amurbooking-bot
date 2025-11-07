@@ -32,7 +32,7 @@ class Booking(TimedBaseModel):
     __tablename__ = prefix + "bookings"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    status = Column(Integer, nullable=False) # 0 - in work; 1 - completed; 2 - cant book;
+    status = Column(Integer, nullable=False) # 0 - free; 1 - in work; 2 - completed; 3 - cant book;
     truck = Column(String, nullable=False)
     good_character = Column(String, nullable=False)
     book_date = Column(DateTime, nullable=False)

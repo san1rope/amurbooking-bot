@@ -1,4 +1,5 @@
 import asyncio
+import json
 from copy import deepcopy
 from typing import Optional, Union
 
@@ -8,7 +9,7 @@ from playwright.async_api import Page, Browser, async_playwright, ProxySettings
 from config import Config
 from tg_bot.db_models.db_gino import connect_to_db
 from tg_bot.db_models.quick_commands import DbAccount
-from tg_bot.misc.models import ProxyData
+from tg_bot.misc.models import ProxyData, WorkTypes
 
 
 class BrowserProcessing:
@@ -58,12 +59,12 @@ class BrowserProcessing:
         host, port, username, password = db_account.proxy.split(":")
         self.ACCOUNT_PROXY = ProxyData(host=host, port=port, username=username, password=password)
 
-        if self.WORK_TYPE == "temp":
-            return await self.auth()
+        if self.WORK_TYPE == WorkTypes.GET_TRUCKS_LIST:
+            return await self.get_trucks_info()
 
     async def get_trucks_info(self, retries: int = 3):
         headers = deepcopy(self.DEFAULT_HEADERS)
-        headers["referer"] = ""
+        headers["referer"] = "https://amurbooking.com/lk"
 
         if not self.ACCOUNT_AUTH_TOKEN:
             if not await self.auth():
@@ -72,7 +73,7 @@ class BrowserProcessing:
         headers["authorization"] = self.ACCOUNT_AUTH_TOKEN
 
         async with self.AIOHTTP_SESSION.get(
-                url="",
+                url="https://amurbooking.com/oktet/api/v1/vehicle/current-user?page=0&size=10&sort=model,ASC",
                 headers=headers,
                 proxy=f"http://{self.ACCOUNT_PROXY.host}:{self.ACCOUNT_PROXY.port}",
                 proxy_auth=BasicAuth(login=self.ACCOUNT_PROXY.username, password=self.ACCOUNT_PROXY.password) \
@@ -80,7 +81,21 @@ class BrowserProcessing:
                 timeout=20
         ) as response:
             if response.status == 200:
-                pass
+                answer = json.loads(await response.text())
+                return [f"{car_data['model']} / {car_data['registrationPlate']}" for car_data in answer["content"]]
+
+            if retries:
+                Config.logger.error(
+                    f"Не удалось получить данные о грузовиках!"
+                    f"\nкод={response.status}\nответ: {await response.text()}"
+                )
+                return await self.get_trucks_info(retries=retries - 1)
+
+            Config.logger.error(
+                f"Попытки для получения данных о грузовиках закончились!"
+                f"\nкод={response.status}\nответ: {await response.text()}"
+            )
+            return False
 
     async def auth(self, retries: int = 3) -> bool:
         headers = deepcopy(self.DEFAULT_HEADERS)

@@ -1,0 +1,24 @@
+db_gino.py:41 #INFO     [2025-11-07 07:55:23,861] - tg_bot.db_models.db_gino - 0| Connecting to PostgreSQL...
+base.py:1234 #INFO     [2025-11-07 07:55:24,510] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-07 07:55:24,510] - gino.engine._SAEngine - 0| ('amurbooking_bot_messages',)
+result.py:809 #DEBUG    [2025-11-07 07:55:24,530] - gino.engine._SAEngine - 0| Col ('relname',)
+result.py:1260 #DEBUG    [2025-11-07 07:55:24,530] - gino.engine._SAEngine - 0| Row ('amurbooking_bot_messages',)
+base.py:1234 #INFO     [2025-11-07 07:55:24,530] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-07 07:55:24,530] - gino.engine._SAEngine - 0| ('amurbooking_bot_accounts',)
+result.py:809 #DEBUG    [2025-11-07 07:55:24,531] - gino.engine._SAEngine - 0| Col ('relname',)
+result.py:1260 #DEBUG    [2025-11-07 07:55:24,531] - gino.engine._SAEngine - 0| Row ('amurbooking_bot_accounts',)
+base.py:1234 #INFO     [2025-11-07 07:55:24,531] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-07 07:55:24,531] - gino.engine._SAEngine - 0| ('amurbooking_bot_bookings',)
+result.py:809 #DEBUG    [2025-11-07 07:55:24,532] - gino.engine._SAEngine - 0| Col ('relname',)
+result.py:1260 #DEBUG    [2025-11-07 07:55:24,532] - gino.engine._SAEngine - 0| Row ('amurbooking_bot_bookings',)
+base.py:1234 #INFO     [2025-11-07 07:55:24,534] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_accounts.id, amurbooking_bot_accounts.phone, amurbooking_bot_accounts.password, amurbooking_bot_accounts.proxy, amurbooking_bot_accounts.auth_token, amurbooking_bot_accounts.is_work, amurbooking_bot_accounts.created_at, amurbooking_bot_accounts.updated_at 
+FROM amurbooking_bot_accounts 
+WHERE amurbooking_bot_accounts.id = $1
+base.py:1236 #INFO     [2025-11-07 07:55:24,534] - gino.engine._SAEngine - 0| (1,)
+result.py:809 #DEBUG    [2025-11-07 07:55:24,538] - gino.engine._SAEngine - 0| Col ('id', 'phone', 'password', 'proxy', 'auth_token', 'is_work', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-07 07:55:24,538] - gino.engine._SAEngine - 0| Row (1, '+79638042595', 'VovanR797$', '31.59.236.40:59100:valetinles:f5bay87SBb', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhY3Rpdml0aWVzLXNlY3VyZS1hcGkiLCJhdWQiOiJhY3Rpdml0aWVzLXNlY3VyZS1hcHAiLCJzdWIiOiIzNTVmZGZhZC1iN ... (9 characters truncated) ... ctOTgxNy0xNzRiYWY2ZDkzNGYiLCJleHAiOjE3NjI1NjQ1MTUsInJvbCI6W119.N5OEpDh_xP8UmfWDGuoCjXpZBkqxP0iec1CdZ9tRneiH066AiuzzM21S0fzkbzHuVnxgcGg9Ir8NgEg47cO-Rw', None, datetime.datetime(2025, 11, 7, 1, 1, 55, 990230, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 7, 1, 15, 16, 245473, tzinfo=datetime.timezone.utc))
+base_events.py:1758 #ERROR    [2025-11-07 07:55:25,136] - asyncio - 0| Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x00000281250F6530>
+base_events.py:1758 #ERROR    [2025-11-07 07:55:25,137] - asyncio - 0| Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x00000281253A9840>, 116924.015)])']
+connector: <aiohttp.connector.TCPConnector object at 0x00000281250F6590>
