@@ -84,11 +84,18 @@ class BrowserProcessing:
                 answer = json.loads(await response.text())
                 return [f"{car_data['model']} / {car_data['registrationPlate']}" for car_data in answer["content"]]
 
-            if retries:
+            elif response.status == 401:
+                Config.logger.error(f"Не удалось получить данные о грузовиках! Пробую пройти авторизацию...")
+                await self.auth()
+
+            else:
                 Config.logger.error(
                     f"Не удалось получить данные о грузовиках!"
                     f"\nкод={response.status}\nответ: {await response.text()}"
                 )
+
+            if retries:
+                await asyncio.sleep(5)
                 return await self.get_trucks_info(retries=retries - 1)
 
             Config.logger.error(
@@ -114,6 +121,7 @@ class BrowserProcessing:
                         if self.ACCOUNT_PROXY.username else None,
                 timeout=20
         ) as response:
+            auth_token = None
             if response.status == 200:
                 auth_token = response.headers.get("Authorization")
                 if auth_token.strip().startswith("Bearer "):
@@ -125,6 +133,7 @@ class BrowserProcessing:
 
             if retries:
                 Config.logger.error(f"Не удалось войти в аккаунт!\nКод: {response.status}\nauth_token: {auth_token}")
+                await asyncio.sleep(5)
                 return await self.auth(retries=retries - 1)
 
             Config.logger.error("Попытки для входа в аккаунт закончились!")

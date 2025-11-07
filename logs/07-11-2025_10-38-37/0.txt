@@ -1,0 +1,34 @@
+db_gino.py:41 #INFO     [2025-11-07 10:38:37,140] - tg_bot.db_models.db_gino - 0| Connecting to PostgreSQL...
+base.py:1234 #INFO     [2025-11-07 10:38:37,559] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-07 10:38:37,559] - gino.engine._SAEngine - 0| ('amurbooking_bot_messages',)
+result.py:809 #DEBUG    [2025-11-07 10:38:37,564] - gino.engine._SAEngine - 0| Col ('relname',)
+result.py:1260 #DEBUG    [2025-11-07 10:38:37,564] - gino.engine._SAEngine - 0| Row ('amurbooking_bot_messages',)
+base.py:1234 #INFO     [2025-11-07 10:38:37,564] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-07 10:38:37,566] - gino.engine._SAEngine - 0| ('amurbooking_bot_accounts',)
+result.py:809 #DEBUG    [2025-11-07 10:38:37,567] - gino.engine._SAEngine - 0| Col ('relname',)
+result.py:1260 #DEBUG    [2025-11-07 10:38:37,567] - gino.engine._SAEngine - 0| Row ('amurbooking_bot_accounts',)
+base.py:1234 #INFO     [2025-11-07 10:38:37,567] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-07 10:38:37,568] - gino.engine._SAEngine - 0| ('amurbooking_bot_bookings',)
+result.py:809 #DEBUG    [2025-11-07 10:38:37,568] - gino.engine._SAEngine - 0| Col ('relname',)
+result.py:1260 #DEBUG    [2025-11-07 10:38:37,568] - gino.engine._SAEngine - 0| Row ('amurbooking_bot_bookings',)
+base.py:1234 #INFO     [2025-11-07 10:38:37,569] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_accounts.id, amurbooking_bot_accounts.phone, amurbooking_bot_accounts.password, amurbooking_bot_accounts.proxy, amurbooking_bot_accounts.auth_token, amurbooking_bot_accounts.is_work, amurbooking_bot_accounts.created_at, amurbooking_bot_accounts.updated_at 
+FROM amurbooking_bot_accounts 
+WHERE amurbooking_bot_accounts.id = $1
+base.py:1236 #INFO     [2025-11-07 10:38:37,569] - gino.engine._SAEngine - 0| (1,)
+result.py:809 #DEBUG    [2025-11-07 10:38:37,571] - gino.engine._SAEngine - 0| Col ('id', 'phone', 'password', 'proxy', 'auth_token', 'is_work', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-07 10:38:37,571] - gino.engine._SAEngine - 0| Row (1, '+6540654656', 'kgkuhhllkj', '31.59.236.40:59100:valetinles:f5bay87SBb', None, None, datetime.datetime(2025, 11, 7, 8, 30, 32, 970186, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 7, 8, 30, 32, 970186, tzinfo=datetime.timezone.utc))
+browser_processing.py:129 #ERROR    [2025-11-07 10:38:38,334] - root - 0| Не удалось войти в аккаунт!
+Код: 401
+auth_token: None
+browser_processing.py:129 #ERROR    [2025-11-07 10:38:43,659] - root - 0| Не удалось войти в аккаунт!
+Код: 401
+auth_token: None
+browser_processing.py:129 #ERROR    [2025-11-07 10:38:48,979] - root - 0| Не удалось войти в аккаунт!
+Код: 401
+auth_token: None
+browser_processing.py:133 #ERROR    [2025-11-07 10:38:54,205] - root - 0| Попытки для входа в аккаунт закончились!
+base_events.py:1758 #ERROR    [2025-11-07 10:38:54,205] - asyncio - 0| Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001B89C60E2C0>
+base_events.py:1758 #ERROR    [2025-11-07 10:38:54,205] - asyncio - 0| Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000001B89CA68100>, 169503.828)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000001B89C60E320>

@@ -12,5 +12,5 @@ class AddBookingStates(StatesGroup):
     SelectTruck = State()
     SelectGoodCharacter = State()
     SelectDate = State()
-    WriteTimeDuration = State()
+    SelectTimeRange = State()
     Confirmation = State()

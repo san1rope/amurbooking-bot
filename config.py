@@ -40,3 +40,9 @@ class Config:
     DB_PASSWORD = os.getenv("DB_PASSWORD").strip()
     DB_HOST = os.getenv("DB_HOST").strip()
     DB_NAME = os.getenv("DB_NAME").strip()
+
+    GOOD_CHARACTERS = {
+        1: "Опасный",
+        2: "Скоропортящийся",
+        3: "Иной нережимный груз"
+    }

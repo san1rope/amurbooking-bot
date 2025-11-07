@@ -1,0 +1,41 @@
+db_gino.py:41 #INFO     [2025-11-07 10:46:22,030] - tg_bot.db_models.db_gino - 0| Connecting to PostgreSQL...
+base.py:1234 #INFO     [2025-11-07 10:46:22,428] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-07 10:46:22,428] - gino.engine._SAEngine - 0| ('amurbooking_bot_messages',)
+result.py:809 #DEBUG    [2025-11-07 10:46:22,435] - gino.engine._SAEngine - 0| Col ('relname',)
+result.py:1260 #DEBUG    [2025-11-07 10:46:22,435] - gino.engine._SAEngine - 0| Row ('amurbooking_bot_messages',)
+base.py:1234 #INFO     [2025-11-07 10:46:22,435] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-07 10:46:22,437] - gino.engine._SAEngine - 0| ('amurbooking_bot_accounts',)
+result.py:809 #DEBUG    [2025-11-07 10:46:22,438] - gino.engine._SAEngine - 0| Col ('relname',)
+result.py:1260 #DEBUG    [2025-11-07 10:46:22,438] - gino.engine._SAEngine - 0| Row ('amurbooking_bot_accounts',)
+base.py:1234 #INFO     [2025-11-07 10:46:22,438] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-07 10:46:22,439] - gino.engine._SAEngine - 0| ('amurbooking_bot_bookings',)
+result.py:809 #DEBUG    [2025-11-07 10:46:22,439] - gino.engine._SAEngine - 0| Col ('relname',)
+result.py:1260 #DEBUG    [2025-11-07 10:46:22,439] - gino.engine._SAEngine - 0| Row ('amurbooking_bot_bookings',)
+base.py:1234 #INFO     [2025-11-07 10:46:22,440] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_accounts.id, amurbooking_bot_accounts.phone, amurbooking_bot_accounts.password, amurbooking_bot_accounts.proxy, amurbooking_bot_accounts.auth_token, amurbooking_bot_accounts.is_work, amurbooking_bot_accounts.created_at, amurbooking_bot_accounts.updated_at 
+FROM amurbooking_bot_accounts 
+WHERE amurbooking_bot_accounts.id = $1
+base.py:1236 #INFO     [2025-11-07 10:46:22,440] - gino.engine._SAEngine - 0| (1,)
+result.py:809 #DEBUG    [2025-11-07 10:46:22,442] - gino.engine._SAEngine - 0| Col ('id', 'phone', 'password', 'proxy', 'auth_token', 'is_work', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-07 10:46:22,442] - gino.engine._SAEngine - 0| Row (1, '+6540654656', 'kgkuhhllkj', '31.59.236.40:59100:valetinles:f5bay87SBb', None, None, datetime.datetime(2025, 11, 7, 8, 30, 32, 970186, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 7, 8, 30, 32, 970186, tzinfo=datetime.timezone.utc))
+browser_processing.py:136 #ERROR    [2025-11-07 10:46:23,194] - root - 0| Не удалось войти в аккаунт!
+Код: 401
+auth_token: None
+browser_processing.py:136 #ERROR    [2025-11-07 10:46:28,517] - root - 0| Не удалось войти в аккаунт!
+Код: 401
+auth_token: None
+base_events.py:1758 #ERROR    [2025-11-07 10:46:32,627] - asyncio - 0| Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000021BB29FE320>
+base_events.py:1758 #ERROR    [2025-11-07 10:46:32,627] - asyncio - 0| Fatal error on SSL transport
+protocol: <asyncio.sslproto.SSLProtocol object at 0x0000021BB2E4FC10>
+transport: <_ProactorSocketTransport fd=1224 read=<_OverlappedFuture cancelled>>
+Traceback (most recent call last):
+  File "C:\Users\Valentyn\AppData\Local\Programs\Python\Python310\lib\asyncio\sslproto.py", line 690, in _process_write_backlog
+    self._transport.write(chunk)
+  File "C:\Users\Valentyn\AppData\Local\Programs\Python\Python310\lib\asyncio\proactor_events.py", line 365, in write
+    self._loop_writing(data=bytes(data))
+  File "C:\Users\Valentyn\AppData\Local\Programs\Python\Python310\lib\asyncio\proactor_events.py", line 401, in _loop_writing
+    self._write_fut = self._loop._proactor.send(self._sock, data)
+AttributeError: 'NoneType' object has no attribute 'send'
+base_events.py:1758 #ERROR    [2025-11-07 10:46:32,628] - asyncio - 0| Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021BB2E58100>, 169958.14)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021BB29FE380>
