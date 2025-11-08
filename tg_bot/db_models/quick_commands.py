@@ -114,10 +114,11 @@ class DbBooking:
     def __init__(
             self, db_id: Optional[int] = None, status: Optional[int] = None, truck: Optional[str] = None,
             good_character: Optional[int] = None, book_date: Optional[datetime] = None,
-            time_duration: Optional[str] = None
+            time_duration: Optional[str] = None, account_id: Optional[int] = None
     ):
         self.db_id = db_id
         self.status = status
+        self.account_id = account_id
         self.truck = truck
         self.good_character = good_character
         self.book_date = book_date
@@ -126,7 +127,7 @@ class DbBooking:
     async def add(self) -> Union[Booking, bool]:
         try:
             target = Booking(status=self.status, truck=self.truck, good_character=self.good_character,
-                             book_date=self.book_date, time_duration=self.time_duration)
+                             book_date=self.book_date, time_duration=self.time_duration, account_id=self.account_id)
             return await target.create()
 
         except UniqueViolationError as ex:
@@ -141,6 +142,9 @@ class DbBooking:
 
             if self.status is not None:
                 return await q.where(Booking.status == self.status).gino.all()
+
+            if self.account_id is not None:
+                return await q.where(Booking.account_id == self.account_id).gino.all()
 
             return await q.gino.all()
 

@@ -18,6 +18,7 @@ class InlineMarkups:
     add_account_btn = InlineKeyboardButton(text="➕ Добавить аккаунт", callback_data="add_account")
     move_to_accounts_list_btn = InlineKeyboardButton(text="В список аккаунтов", callback_data="move_to_accounts_list")
     add_booking_btn = InlineKeyboardButton(text="➕ Добавить заявку", callback_data="add_booking")
+    move_to_bookings_list_btn = InlineKeyboardButton(text="В список заявок", callback_data="back_to_bookings_list")
     select_first_half_day_btn = InlineKeyboardButton(
         text="9:00 - 12:00", callback_data=CustomCallback(role="select_time", data="9:00_180").pack())
     select_second_half_day_btn = InlineKeyboardButton(
@@ -82,11 +83,20 @@ class InlineMarkups:
         return markup
 
     @staticmethod
-    async def universal_btn(callback_data: str, btn_text, custom_data: Optional[str] = None) -> InlineKeyboardButton:
+    async def universal_btn(callback_data: str, btn_text: str, custom_data: Optional[str] = None) \
+            -> InlineKeyboardButton:
         if custom_data:
             callback_data = CustomCallback(role=callback_data, data=str(custom_data)).pack()
 
         return InlineKeyboardButton(text=btn_text, callback_data=callback_data)
+
+    @staticmethod
+    async def get_turn_on_btn(callback_data: str, custom_data: Optional[str] = None, turn_off: bool = False) \
+            -> InlineKeyboardButton:
+        if custom_data:
+            callback_data = CustomCallback(role=callback_data, data=str(custom_data)).pack()
+
+        return InlineKeyboardButton(text="Остановить" if turn_off else "Запуск", callback_data=callback_data)
 
     @staticmethod
     async def get_confirm_btn(callback_data: str, custom_data: Optional[str] = None) -> InlineKeyboardButton:
