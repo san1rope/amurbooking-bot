@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 class WorkTypes:
+    BOOKING_PROCESSING = "booking_processing"
     GET_TRUCKS_LIST = "get_trucks_list"
 
 

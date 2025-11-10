@@ -20,9 +20,9 @@ class InlineMarkups:
     add_booking_btn = InlineKeyboardButton(text="➕ Добавить заявку", callback_data="add_booking")
     move_to_bookings_list_btn = InlineKeyboardButton(text="В список заявок", callback_data="back_to_bookings_list")
     select_first_half_day_btn = InlineKeyboardButton(
-        text="9:00 - 12:00", callback_data=CustomCallback(role="select_time", data="9:00_180").pack())
+        text="9:00 - 12:00", callback_data=CustomCallback(role="select_time", data="9-00_180").pack())
     select_second_half_day_btn = InlineKeyboardButton(
-        text="12:05 - 21:40", callback_data=CustomCallback(role="select_time", data="12:05_575").pack())
+        text="12:05 - 21:40", callback_data=CustomCallback(role="select_time", data="12-05_575").pack())
 
     @staticmethod
     async def calendar(date_time: datetime) -> InlineKeyboardMarkup:

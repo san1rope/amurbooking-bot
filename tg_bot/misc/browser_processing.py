@@ -1,15 +1,21 @@
 import asyncio
+import base64
 import json
+import time
 from copy import deepcopy
-from typing import Optional, Union
+from random import uniform
+from typing import Optional
+from datetime import datetime, timedelta
 
 from aiohttp import ClientSession, BasicAuth
-from playwright.async_api import Page, Browser, async_playwright, ProxySettings
+from playwright.async_api import Page, Browser, async_playwright
 
 from config import Config
 from tg_bot.db_models.db_gino import connect_to_db
-from tg_bot.db_models.quick_commands import DbAccount
+from tg_bot.db_models.quick_commands import DbAccount, DbBooking
+from tg_bot.db_models.schemas import Booking
 from tg_bot.misc.models import ProxyData, WorkTypes
+from tg_bot.misc.utils import Utils as Ut
 
 
 class BrowserProcessing:
@@ -29,12 +35,14 @@ class BrowserProcessing:
         "user-agent": USER_AGENT
     }
     AIOHTTP_SESSION: Optional[ClientSession] = None
+    NEW_PROCESS: Optional[bool] = None
 
     ACCOUNT_ID: Optional[int] = None
     ACCOUNT_PHONE: Optional[str] = None
     ACCOUNT_PASSWORD: Optional[str] = None
     ACCOUNT_AUTH_TOKEN: Optional[str] = None
     ACCOUNT_PROXY: Optional[ProxyData] = None
+    BOOKING_OBJ: Optional[Booking] = None
 
     WORK_TYPE: Optional[str] = None
 
@@ -43,13 +51,206 @@ class BrowserProcessing:
     PL_CONTEXT = None
     PL_PAGE: Optional[Page] = None
 
-    def __init__(self, account_id: int, work_type: str):
+    def __init__(self, work_type: str, account_id: Optional[int], new_process: bool = False):
         self.AIOHTTP_SESSION = ClientSession()
         self.ACCOUNT_ID = account_id
         self.WORK_TYPE = work_type
+        self.NEW_PROCESS = new_process
+
+    async def processing_booking(self):
+        db_booking = await DbBooking(status=1, account_id=self.ACCOUNT_ID).select()
+        self.BOOKING_OBJ = db_booking
+        if not db_booking:
+            Config.logger.error("Записи в bookings не существует!")
+            await self.send_log_to_tg("Записи не существует")
+            return
+
+        db_booking = db_booking[0]
+        self.BOOKING_OBJ = db_booking
+
+        result = await self.get_booking_data_per_day()
+        if (not result) or ("availableToBook" not in result[0]):
+            Config.logger.error(f"Не удалось получить данные о времени!\nОтвет: {result}")
+            return
+
+        await self.get_new_browser_obj()
+        await self.PL_PAGE.goto("https://amurbooking.com/")
+        await self.PL_PAGE.evaluate(
+            "({ key, value }) => localStorage.setItem(key, value)",
+            {"key": "oktet-auth-token", "value": self.ACCOUNT_AUTH_TOKEN}
+        )
+        await asyncio.sleep(uniform(1, 2))
+        await self.PL_PAGE.goto("https://amurbooking.com/booking")
+
+        await self.PL_PAGE.wait_for_selector(".btn-lg", timeout=30000)
+        await self.PL_PAGE.locator(".btn-lg").first.click(timeout=10000)
+        await self.PL_PAGE.locator(".datepicker-input").wait_for(state="attached", timeout=30000)
+
+        await self.PL_PAGE.locator(".ng-input").first.click()
+        await self.PL_PAGE.get_by_text(self.BOOKING_OBJ.truck).click()
+
+        await self.PL_PAGE.locator("#cargoType").click()
+        await self.PL_PAGE.wait_for_selector(
+            f"xpath=//*[contains(normalize-space(), '{Config.GOOD_CHARACTERS[self.BOOKING_OBJ.good_character]}')]",
+            timeout=15000
+        )
+        await self.PL_PAGE.get_by_text(Config.GOOD_CHARACTERS[self.BOOKING_OBJ.good_character]).click()
+
+        await self.PL_PAGE.locator(".datepicker-input").click()
+
+        start_tr = self.BOOKING_OBJ.book_date  # start time range
+        end_tr = self.BOOKING_OBJ.book_date + timedelta(minutes=self.BOOKING_OBJ.time_duration)  # end time range
+        selected_time_text = ""
+        while True:
+            print("request")
+            await asyncio.sleep(uniform(0.300, 0.500))
+            result = await self.get_booking_data_per_day()
+            if not result:
+                continue
+
+            flag = False
+            for time_info in result:
+                time_info_dt = datetime.strptime(time_info['dateBooked'], "%Y-%m-%dT%H:%M:%S")
+                if time_info["availableToBook"] and start_tr <= time_info_dt <= end_tr:
+                    selected_time_text = time_info_dt.strftime("%H:%M")
+                    flag = True
+                    break
+
+            if flag:
+                break
+
+        await self.PL_PAGE.locator(".datepicker-input").fill(self.BOOKING_OBJ.book_date.strftime("%d.%m.%Y"))
+        await self.PL_PAGE.locator(".form-control--time").click()
+        await self.PL_PAGE.wait_for_selector(".select-time", state="attached", timeout=5000)
+        await self.PL_PAGE.get_by_text(selected_time_text).click()
+
+        await self.PL_PAGE.locator(".form-footer .btn-primary").click()
+
+        await self.PL_PAGE.wait_for_selector("iframe[data-testid='checkbox-iframe']", timeout=15000)
+        frame_loc = self.PL_PAGE.frame_locator("iframe[data-testid='checkbox-iframe']")
+
+        slider = frame_loc.locator(".Thumb")
+        track = frame_loc.locator(".Track")
+
+        await slider.wait_for(state="visible", timeout=10_000)
+        await track.wait_for(state="visible", timeout=10_000)
+
+        sbb = await slider.bounding_box()
+        tbb = await track.bounding_box()
+
+        print(f"sbb = {sbb}")
+        print(f"tbb = {tbb}")
+
+        sx = sbb["x"] + sbb["width"] / 2
+        sy = sbb["y"] + sbb["height"] / 2
+        tx = tbb["x"] + tbb["width"] - 2
+        ty = sy
+
+        await asyncio.sleep(1)
+
+        await self.PL_PAGE.mouse.move(sx, sy)
+        await self.PL_PAGE.mouse.down()
+        await self.PL_PAGE.mouse.move(tx, ty, steps=20)
+        await self.PL_PAGE.mouse.up()
+
+        await self.PL_PAGE.wait_for_selector('iframe[data-testid="advanced-iframe"]', timeout=15000)
+        iframe_el = await self.PL_PAGE.query_selector('iframe[data-testid="advanced-iframe"]')
+        frame = await iframe_el.content_frame()
+
+        while True:
+            # 3) Дочекатись області з капчею
+            try:
+                view = frame.locator(".AdvancedCaptcha-View")
+                await view.wait_for(state="visible", timeout=15_000)
+            except Exception:
+                print("⏳ Не дочекались .AdvancedCaptcha-View")
+                return False
+
+            # 4) Дістати URL картинки капчі
+            img = view.locator("img")
+            src = await img.get_attribute("src")
+            if not src:
+                print("❌ Не знайшов src для картинки капчі")
+                return False
+
+            # 5) Завантажити картинку та відправити на RuCaptcha
+            async with ClientSession() as session:
+                proxy = "http://31.59.236.40:59100"
+                proxy_auth = BasicAuth("valetinles", "f5bay87SBb")
+                async with session.get(url=src, proxy=proxy, proxy_auth=proxy_auth) as resp:
+                    img_bytes = await resp.read()
+                img_b64 = base64.b64encode(img_bytes).decode("utf-8")
+
+                data_post = {
+                    "key": "bfcac84dd8e6d4df3bd114d93ede4f51",
+                    "method": "base64",
+                    "body": img_b64,
+                    "phrase": 1,
+                    "regsense": 0,
+                    "numeric": 2,
+                    "lang": "ru",
+                    "json": 1,
+                }
+                async with session.post("http://rucaptcha.com/in.php", json=data_post) as resp:
+                    answer_text = await resp.text()
+                    print(answer_text)
+                    post_answer = json.loads(answer_text)
+
+                if post_answer.get("status") != 1:
+                    print("❌ RuCaptcha in.php error:", post_answer)
+                    return False
+
+                req_id = post_answer.get("request")
+
+                params_get = {"key": "bfcac84dd8e6d4df3bd114d93ede4f51", "action": "get", "id": req_id, "json": 1}
+                captcha_result = None
+                for _ in range(500):
+                    await asyncio.sleep(0.2)
+                    async with session.get("http://rucaptcha.com/res.php", params=params_get) as resp:
+                        answer_text = await resp.text()
+                        print(answer_text)
+                        get_answer = json.loads(answer_text)
+
+                    if get_answer.get("status") == 1:
+                        captcha_result = get_answer.get("request")
+                        break
+
+                if not captcha_result:
+                    print("❌ Не отримали відповідь RuCaptcha вчасно")
+                    return False
+
+            print("captcha_result", captcha_result)
+
+            input_box = frame.locator("#xuniq-0-1")
+            await input_box.wait_for(state="visible", timeout=5_000)
+            await input_box.fill(captcha_result)
+
+            submit_btn = frame.locator(".CaptchaButton-ProgressWrapper")
+            await submit_btn.click()
+
+            hint = frame.locator(".Textinput-Hint")
+            try:
+                await hint.wait_for(state="attached", timeout=5_000)
+                style = await hint.get_attribute("style") or ""
+                if "hidden" in style:
+                    break
+
+                else:
+                    continue
+
+            except Exception:
+                break
+
+        print("sleep")
+        time.sleep(1000)
 
     async def run_task(self):
-        await connect_to_db(remove_data=False)
+        if self.NEW_PROCESS:
+            datetime_of_start = datetime.now(tz=Config.TIMEZONE).strftime(Config.DATETIME_FORMAT)
+            logger = await Ut.add_logging(datetime_of_start=datetime_of_start, process_id=0)
+            Config.logger = logger
+
+            await connect_to_db(remove_data=False)
 
         db_account = await DbAccount(db_id=self.ACCOUNT_ID).select()
         self.ACCOUNT_PHONE = db_account.phone
@@ -62,6 +263,71 @@ class BrowserProcessing:
         if self.WORK_TYPE == WorkTypes.GET_TRUCKS_LIST:
             return await self.get_trucks_info()
 
+        elif self.WORK_TYPE == WorkTypes.BOOKING_PROCESSING:
+            return await self.processing_booking()
+
+        elif self.WORK_TYPE == "test":
+            return await self.auth()
+
+        else:
+            return None
+
+    async def send_log_to_tg(self, log_text: str):
+        for uid in Config.ADMINS:
+            try:
+                text = [
+                    f"\n<b>{log_text}</b>"
+                ]
+                await Config.BOT.send_message(chat_id=uid, text="\n".join(text))
+
+            except Exception as ex:
+                Config.logger.warning(f"Не удалось прислать лог в телеграм! user_id={uid}\n{ex}")
+
+    async def get_booking_data_per_day(self, retries: int = 3):
+        headers = deepcopy(self.DEFAULT_HEADERS)
+        headers["referer"] = "https://amurbooking.com/booking"
+
+        if not self.ACCOUNT_AUTH_TOKEN:
+            if not await self.auth():
+                return False
+
+        headers["authorization"] = self.ACCOUNT_AUTH_TOKEN
+        date = self.BOOKING_OBJ.book_date.strftime("%Y-%m-%d")
+
+        print(f"date = {date}")
+
+        async with self.AIOHTTP_SESSION.get(
+                url=f"https://amurbooking.com/oktet/api/v1/booking/time-slots?date={date}",
+                headers=headers,
+                proxy=f"http://{self.ACCOUNT_PROXY.host}:{self.ACCOUNT_PROXY.port}",
+                proxy_auth=BasicAuth(login=self.ACCOUNT_PROXY.username, password=self.ACCOUNT_PROXY.password) \
+                        if self.ACCOUNT_PROXY.username else None,
+                timeout=20
+        ) as response:
+            print(await response.text())
+            if response.status == 200:
+                return json.loads(await response.text())
+
+            elif response.status == 401:
+                Config.logger.error(f"Не удалось получить данные о времени! Пробую пройти авторизацию...\n")
+                await self.auth()
+
+            else:
+                Config.logger.error(
+                    f"Не удалось получить данные о временеи!"
+                    f"\nкод={response.status}\nответ: {await response.text()}"
+                )
+
+            if retries:
+                await asyncio.sleep(5)
+                return await self.get_booking_data_per_day(retries=retries - 1)
+
+            Config.logger.error(
+                f"Попытки для получения данных о времени закончились!"
+                f"\nкод={response.status}\nответ: {await response.text()}"
+            )
+            return False
+
     async def get_trucks_info(self, retries: int = 3):
         headers = deepcopy(self.DEFAULT_HEADERS)
         headers["referer"] = "https://amurbooking.com/lk"
@@ -71,7 +337,6 @@ class BrowserProcessing:
                 return False
 
         headers["authorization"] = self.ACCOUNT_AUTH_TOKEN
-
         async with self.AIOHTTP_SESSION.get(
                 url="https://amurbooking.com/oktet/api/v1/vehicle/current-user?page=0&size=10&sort=model,ASC",
                 headers=headers,
@@ -128,8 +393,9 @@ class BrowserProcessing:
                     self.ACCOUNT_AUTH_TOKEN = auth_token
                     await DbAccount(db_id=self.ACCOUNT_ID).update(auth_token=self.ACCOUNT_AUTH_TOKEN)
 
+                    print(f"auth_token = {auth_token}")
                     Config.logger.info(f"Успешно вошел в аккаунт №{self.ACCOUNT_ID}!")
-                    return True
+                    return auth_token  # temp
 
             if retries:
                 Config.logger.error(f"Не удалось войти в аккаунт!\nКод: {response.status}\nauth_token: {auth_token}")

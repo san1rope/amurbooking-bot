@@ -4,7 +4,7 @@ import json
 import time
 
 from aiohttp import ClientSession, BasicAuth
-from playwright.async_api import async_playwright
+from playwright.async_api import async_playwright, ProxySettings
 from playwright_stealth import Stealth
 
 
@@ -18,6 +18,7 @@ async def check_account_auth():
 
 async def main():
     async with async_playwright() as p:
+        ProxySettings
         browser = await p.chromium.launch(
             headless=False,
             proxy={

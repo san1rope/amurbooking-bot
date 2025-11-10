@@ -1,6 +1,7 @@
 from typing import Union
 
 from aiogram import Router, F, types, enums
+from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.markdown import hcode
 
@@ -133,6 +134,7 @@ async def delete_account_confirm(callback: types.CallbackQuery, callback_data: C
         await callback.message.edit_text(text="<b>🔴 Не удалось удалить аккаунт!</b>")
 
 
+@router.message(Command("add_account"))
 @router.callback_query(F.data == "add_account")
 @router.callback_query(F.data == "back_to_add_account_phone")
 async def add_account(callback: types.CallbackQuery, state: FSMContext):

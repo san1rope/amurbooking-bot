@@ -15,11 +15,10 @@ load_dotenv(dotenv_path=".env")
 
 
 class Config:
-    AIOHTTP_SESSION = AiohttpSession("http://valetinles:f5bay87SBb@31.59.236.40:59100")
+    # AIOHTTP_SESSION = AiohttpSession("http://valetinles:f5bay87SBb@31.59.236.40:59100")
 
     BOT_TOKEN = os.getenv("BOT_TOKEN").strip()
-    BOT = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML),
-              session=AIOHTTP_SESSION)
+    BOT = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     DISPATCHER = Dispatcher(storage=MemoryStorage())
 
     HEADLESS: bool = int(os.getenv("HEADLESS").strip())

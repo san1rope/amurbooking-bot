@@ -2,6 +2,7 @@ from datetime import timedelta, datetime
 from typing import Union, Optional
 
 from aiogram import Router, F, types, enums
+from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.markdown import hcode
 
@@ -46,7 +47,7 @@ async def show_bookings_list(message: Union[types.Message, types.CallbackQuery],
         book_texts.append([
             "\n".join([
                 f"<b>🆔 Бронь №{hcode(str(db_book.id))}</b>",
-                f"\n<b>Статус: {Config.BOOKING_STATUSES[db_book.status]}</b>",
+                f"\n<b>ℹ️ Статус: {Config.BOOKING_STATUSES[db_book.status]}</b>",
                 f"<b>🚚 Грузовик: {hcode(str(db_book.truck))}</b>",
                 f"<b>📦 Груз: {hcode(str(db_book.good_character))}</b>",
                 f"<b>Дата и время: {hcode(db_book.book_date.strftime('%d.%m.%Y %H:%M')) + '-'}</b>"
@@ -75,6 +76,133 @@ async def show_bookings_list(message: Union[types.Message, types.CallbackQuery],
     for acc_text, acc_markup in book_texts:
         msg = await message.answer(text=acc_text, reply_markup=acc_markup, disable_web_page_preview=True)
         await Ut.add_msg_to_delete(user_id=uid, msg_id=msg.message_id)
+
+
+@router.callback_query(CustomCallback.filter(F.role == "turn_on_booking"))
+async def turn_on(callback: types.CallbackQuery, callback_data: CustomCallback):
+    await callback.answer()
+    uid = callback.from_user.id
+    Config.logger.info(f"Handler called. {turn_on.__name__}. user_id={uid}")
+
+    result = await DbBooking(db_id=int(callback_data.data)).select()
+    if not result:
+        text = [
+            "<b>🔴 Ошибка!</b>",
+            "\n<b>ℹ️ Записи не существует, либо тех. ошибка</b>"
+        ]
+        await callback.message.edit_text(text="\n".join(text), reply_markup=None, disable_web_page_preview=True)
+        return
+
+    db_bookings = await DbBooking(status=1, account_id=result.account_id).select(count_records=True)
+    if db_bookings:
+        text = [
+             f"<b>🆔 Бронь №{hcode(str(result.id))}</b>",
+            f"\n<b>ℹ️ Статус: {Config.BOOKING_STATUSES[1]}</b>",
+            f"<b>🚚 Грузовик: {hcode(str(result.truck))}</b>",
+            f"<b>📦 Груз: {hcode(str(result.good_character))}</b>",
+            f"<b>Дата и время: {hcode(result.book_date.strftime('%d.%m.%Y %H:%M')) + '-'}</b>"
+            f"{(result.book_date + timedelta(minutes=result.time_duration)).strftime('%H:%M')}",
+            "\n<b>⚠️ Невозможен запуск брони. Уже есть запущенный процесс на этот аккаунт</b>"
+        ]
+        markup = await Im.markup_from_buttons([
+            [await Im.get_turn_on_btn(callback_data="turn_on_booking", custom_data=str(result.id))],
+            [await Im.get_delete_booking_btn(result.id)]
+        ])
+        await callback.message.edit_text(text="\n".join(text), reply_markup=markup, disable_web_page_preview=True)
+        return
+
+    result = await DbBooking(db_id=int(callback_data.data)).update(status=1)
+    if result:
+        text = [
+            f"<b>🆔 Бронь №{hcode(str(result.id))}</b>",
+            f"\n<b>ℹ️ Статус: {Config.BOOKING_STATUSES[1]}</b>",
+            f"<b>🚚 Грузовик: {hcode(str(result.truck))}</b>",
+            f"<b>📦 Груз: {hcode(str(result.good_character))}</b>",
+            f"<b>Дата и время: {hcode(result.book_date.strftime('%d.%m.%Y %H:%M')) + '-'}</b>"
+            f"{(result.book_date + timedelta(minutes=result.time_duration)).strftime('%H:%M')}",
+            "\n<b>🟢 Вы запустили процесс брони!</b>"
+        ]
+        markup = await Im.markup_from_buttons([
+            [await Im.get_turn_on_btn(callback_data="turn_off_booking", custom_data=str(result.id), turn_off=True)],
+            [await Im.get_delete_booking_btn(result.id)]
+        ])
+
+    else:
+        result = await DbBooking(db_id=int(callback_data.data)).select()
+        if not result:
+            text = [
+                "<b>🔴 Ошибка!</b>",
+                "\n<b>Не удалось изменить состояние!</b>",
+                "\n<b>ℹ️ Записи не существует, либо тех. ошибка</b>"
+            ]
+            markup = None
+
+        else:
+            text = [
+                f"<b>🆔 Бронь №{hcode(str(result.id))}</b>",
+                f"\n<b>ℹ️ Статус: {Config.BOOKING_STATUSES[1]}</b>",
+                f"<b>🚚 Грузовик: {hcode(str(result.truck))}</b>",
+                f"<b>📦 Груз: {hcode(str(result.good_character))}</b>",
+                f"<b>Дата и время: {hcode(result.book_date.strftime('%d.%m.%Y %H:%M')) + '-'}</b>"
+                f"{(result.book_date + timedelta(minutes=result.time_duration)).strftime('%H:%M')}",
+                "\n<b>🔴 Не удалось изменить состояние!</b>"
+            ]
+            markup = await Im.markup_from_buttons([
+                [await Im.get_turn_on_btn(callback_data="turn_on_booking", custom_data=str(result.id))],
+                [await Im.get_delete_booking_btn(result.id)]
+            ])
+
+    await callback.message.edit_text(text="\n".join(text), reply_markup=markup, disable_web_page_preview=True)
+
+
+@router.callback_query(CustomCallback.filter(F.role == "turn_off_booking"))
+async def turn_off(callback: types.CallbackQuery, callback_data: CustomCallback):
+    await callback.answer()
+    uid = callback.from_user.id
+    Config.logger.info(f"Handler called. {turn_off.__name__}. user_id={uid}")
+
+    result = await DbBooking(db_id=int(callback_data.data)).update(status=0)
+    if result:
+        text = [
+            f"<b>🆔 Бронь №{hcode(str(result.id))}</b>",
+            f"\n<b>ℹ️ Статус: {Config.BOOKING_STATUSES[1]}</b>",
+            f"<b>🚚 Грузовик: {hcode(str(result.truck))}</b>",
+            f"<b>📦 Груз: {hcode(str(result.good_character))}</b>",
+            f"<b>Дата и время: {hcode(result.book_date.strftime('%d.%m.%Y %H:%M')) + '-'}</b>"
+            f"{(result.book_date + timedelta(minutes=result.time_duration)).strftime('%H:%M')}",
+            "\n<b>🔴 Вы остановили процесс брони!</b>"
+        ]
+        markup = await Im.markup_from_buttons([
+            [await Im.get_turn_on_btn(callback_data="turn_on_booking", custom_data=str(result.id))],
+            [await Im.get_delete_booking_btn(result.id)]
+        ])
+
+    else:
+        result = await DbBooking(db_id=int(callback_data.data)).select()
+        if not result:
+            text = [
+                "<b>🔴 Ошибка!</b>",
+                "\n<b>Не удалось изменить состояние!</b>",
+                "\n<b>ℹ️ Записи не существует, либо тех. ошибка</b>",
+            ]
+            markup = None
+
+        else:
+            text = [
+                f"<b>🆔 Бронь №{hcode(str(result.id))}</b>",
+                f"\n<b>ℹ️ Статус: {Config.BOOKING_STATUSES[1]}</b>",
+                f"<b>🚚 Грузовик: {hcode(str(result.truck))}</b>",
+                f"<b>📦 Груз: {hcode(str(result.good_character))}</b>",
+                f"<b>Дата и время: {hcode(result.book_date.strftime('%d.%m.%Y %H:%M')) + '-'}</b>"
+                f"{(result.book_date + timedelta(minutes=result.time_duration)).strftime('%H:%M')}",
+                "\n<b>🔴 Не удалось изменить состояние!</b>"
+            ]
+            markup = await Im.markup_from_buttons([
+                [await Im.get_turn_on_btn(callback_data="turn_off_booking", custom_data=str(result.id), turn_off=True)],
+                [await Im.get_delete_booking_btn(result.id)]
+            ])
+
+    await callback.message.edit_text(text="\n".join(text), reply_markup=markup, disable_web_page_preview=True)
 
 
 @router.callback_query(CustomCallback.filter(F.role == "delete_booking"))
@@ -118,9 +246,10 @@ async def delete_booking_cancel(callback: types.CallbackQuery, callback_data: Cu
 
     text = [
         f"<b>🆔 Бронь №{hcode(str(db_book.id))}</b>",
+        f"\n<b>ℹ️ Статус: {Config.BOOKING_STATUSES[db_book.status]}</b>",
         f"\n<b>🚚 Грузовик: {hcode(str(db_book.truck))}</b>",
         f"<b>📦 Груз: {hcode(str(db_book.good_character))}</b>",
-        f"<b>Дата и время: {hcode(db_book.book_date.strftime('%d.%m.%Y %H:%M')) + '-'}</b>"
+        f"<b>Дата и время: {hcode(db_book.book_date.strftime('%d.%m.%Y %H:%M')) + '-'}</b>",
         f"{(db_book.book_date + timedelta(minutes=db_book.time_duration)).strftime('%H:%M')}"
     ]
     markup = await Im.markup_from_buttons([[await Im.get_delete_booking_btn(db_book.id)]])
@@ -141,6 +270,7 @@ async def delete_booking_confirm(callback: types.CallbackQuery, callback_data: C
         await callback.message.edit_text(text="<b>🔴 Не удалось удалить запись!</b>")
 
 
+@router.message(Command("add_booking"))
 @router.callback_query(F.data == "add_booking")
 async def add_booking(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
@@ -172,17 +302,22 @@ async def add_booking(callback: types.CallbackQuery, state: FSMContext):
 
 
 @router.callback_query(AddBookingStates.SelectAccount, CustomCallback.filter(F.role == "add_booking_select_account"))
-async def select_account(callback: types.CallbackQuery, state: FSMContext, callback_data: CustomCallback):
+@router.callback_query(F.data == "back_to_select_account")
+async def select_account(callback: types.CallbackQuery, state: FSMContext,
+                         callback_data: Optional[CustomCallback] = None):
     await callback.answer()
     uid = callback.from_user.id
     Config.logger.info(f"Handler called. {select_account.__name__}. user_id={uid}")
 
-    acc_id = int(callback_data.data)
-    await state.update_data(account_id=acc_id)
+    if isinstance(callback_data, CustomCallback):
+        acc_id = int(callback_data.data)
+        await state.update_data(account_id=acc_id)
 
-    trucks_list = await BrowserProcessing(account_id=acc_id, work_type=WorkTypes.GET_TRUCKS_LIST).run_task()
+    data = await state.get_data()
 
-    db_acc = await DbAccount(db_id=acc_id).select()
+    trucks_list = await BrowserProcessing(account_id=data["account_id"], work_type=WorkTypes.GET_TRUCKS_LIST).run_task()
+
+    db_acc = await DbAccount(db_id=data["account_id"]).select()
     text = [
         "<b>➕ Добавление записи на бронь</b>",
         "\n<b>Вам нужно выбрать грузовик для брони</b>",
@@ -201,7 +336,7 @@ async def select_account(callback: types.CallbackQuery, state: FSMContext, callb
                     )
                 ] for truck in trucks_list
             ],
-            [await Im.get_back_btn(callback_data="back_to_bookings_list")]
+            [await Im.get_back_btn(callback_data="add_booking")]
         ])
     )
 
@@ -234,7 +369,7 @@ async def select_truck(callback: types.CallbackQuery, state: FSMContext, callbac
                     )
                 ] for good_id, good_type in Config.GOOD_CHARACTERS.items()
             ],
-            [await Im.get_back_btn(callback_data="add_booking")]
+            [await Im.get_back_btn(callback_data="back_to_select_account")]
         ])
     )
 
@@ -308,7 +443,7 @@ async def select_date(callback: types.CallbackQuery, state: FSMContext, back: bo
         f"\n<b>🆔 Аккаунт №{hcode(str(data['account_id']))}</b>",
         f"<b>🚚 Грузовик: {hcode(data['truck'])}</b>",
         f"<b>📦 Груз: {hcode(Config.GOOD_CHARACTERS[data['good']])}</b>",
-        f"<b>📅 Дата: {hcode(data['date'].strftime('%d.%m.%Y'))}</b>"
+        f"<b>📅 Дата: {hcode(data['date'].strftime('%d.%m.%Y'))}</b>",
         "\n<b>Вам нужно вписать диапазон времени для записи</b>",
         "<b>ℹ️ Формат: HH:MM-HH:MM | Пример: 9:00-09:35, 15:46-19:12, 14:00</b>"
     ]
@@ -336,7 +471,7 @@ async def select_time(message: Union[types.Message, types.CallbackQuery], state:
         await message.answer()
 
         time, duration = callback_data.data.split("_")
-        time_dt = datetime.strptime(time, "%H:%M")
+        time_dt = datetime.strptime(time, "%H-%M")
         await state.update_data(
             date=data["date"].replace(hour=time_dt.hour, minute=time_dt.minute),
             time_duration=int(duration)

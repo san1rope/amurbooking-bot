@@ -30,7 +30,8 @@ async def main():
 
     bot_commands = [
         BotCommand(command="start", description="Стартовое меню"),
-        BotCommand(command="add_account", description="Добавить аккаунт")
+        BotCommand(command="add_booking", description="Добавить запись на бронь"),
+        BotCommand(command="add_account", description="Добавить аккаунт"),
     ]
     await Config.BOT.set_my_commands(commands=bot_commands)
 

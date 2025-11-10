@@ -1,0 +1,36 @@
+db_gino.py:41 #INFO     [2025-11-09 02:18:07,057] - tg_bot.db_models.db_gino - 0| Connecting to PostgreSQL...
+base.py:1234 #INFO     [2025-11-09 02:18:07,611] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-09 02:18:07,611] - gino.engine._SAEngine - 0| ('amurbooking_bot_messages',)
+result.py:809 #DEBUG    [2025-11-09 02:18:07,614] - gino.engine._SAEngine - 0| Col ('relname',)
+result.py:1260 #DEBUG    [2025-11-09 02:18:07,614] - gino.engine._SAEngine - 0| Row ('amurbooking_bot_messages',)
+base.py:1234 #INFO     [2025-11-09 02:18:07,614] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-09 02:18:07,615] - gino.engine._SAEngine - 0| ('amurbooking_bot_accounts',)
+result.py:809 #DEBUG    [2025-11-09 02:18:07,615] - gino.engine._SAEngine - 0| Col ('relname',)
+result.py:1260 #DEBUG    [2025-11-09 02:18:07,615] - gino.engine._SAEngine - 0| Row ('amurbooking_bot_accounts',)
+base.py:1234 #INFO     [2025-11-09 02:18:07,616] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-09 02:18:07,616] - gino.engine._SAEngine - 0| ('amurbooking_bot_bookings',)
+result.py:809 #DEBUG    [2025-11-09 02:18:07,616] - gino.engine._SAEngine - 0| Col ('relname',)
+result.py:1260 #DEBUG    [2025-11-09 02:18:07,616] - gino.engine._SAEngine - 0| Row ('amurbooking_bot_bookings',)
+base.py:1234 #INFO     [2025-11-09 02:18:07,617] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_accounts.id, amurbooking_bot_accounts.phone, amurbooking_bot_accounts.password, amurbooking_bot_accounts.proxy, amurbooking_bot_accounts.auth_token, amurbooking_bot_accounts.is_work, amurbooking_bot_accounts.created_at, amurbooking_bot_accounts.updated_at 
+FROM amurbooking_bot_accounts 
+WHERE amurbooking_bot_accounts.id = $1
+base.py:1236 #INFO     [2025-11-09 02:18:07,618] - gino.engine._SAEngine - 0| (2,)
+result.py:809 #DEBUG    [2025-11-09 02:18:07,619] - gino.engine._SAEngine - 0| Col ('id', 'phone', 'password', 'proxy', 'auth_token', 'is_work', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-09 02:18:07,619] - gino.engine._SAEngine - 0| Row (2, '+79638042595', 'VovanR797$', '31.59.236.40:59100:valetinles:f5bay87SBb', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhY3Rpdml0aWVzLXNlY3VyZS1hcGkiLCJhdWQiOiJhY3Rpdml0aWVzLXNlY3VyZS1hcHAiLCJzdWIiOiIzNTVmZGZhZC1iN ... (9 characters truncated) ... ctOTgxNy0xNzRiYWY2ZDkzNGYiLCJleHAiOjE3NjI3MzM4NTAsInJvbCI6W119.p_zH74WMB-fr-tuyYOd2_Xitlc4Nyt9Acpz_94DfTiXRN5Od17v2OnbC2mGN0Q8cY1XSocV_p-m3fFu65iJqaQ', None, datetime.datetime(2025, 11, 8, 8, 35, 7, 13213, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 9, 0, 17, 30, 949231, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-09 02:18:08,238] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_accounts.id, amurbooking_bot_accounts.phone, amurbooking_bot_accounts.password, amurbooking_bot_accounts.proxy, amurbooking_bot_accounts.auth_token, amurbooking_bot_accounts.is_work, amurbooking_bot_accounts.created_at, amurbooking_bot_accounts.updated_at 
+FROM amurbooking_bot_accounts 
+WHERE amurbooking_bot_accounts.id = $1
+base.py:1236 #INFO     [2025-11-09 02:18:08,238] - gino.engine._SAEngine - 0| (2,)
+result.py:809 #DEBUG    [2025-11-09 02:18:08,238] - gino.engine._SAEngine - 0| Col ('id', 'phone', 'password', 'proxy', 'auth_token', 'is_work', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-09 02:18:08,238] - gino.engine._SAEngine - 0| Row (2, '+79638042595', 'VovanR797$', '31.59.236.40:59100:valetinles:f5bay87SBb', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhY3Rpdml0aWVzLXNlY3VyZS1hcGkiLCJhdWQiOiJhY3Rpdml0aWVzLXNlY3VyZS1hcHAiLCJzdWIiOiIzNTVmZGZhZC1iN ... (9 characters truncated) ... ctOTgxNy0xNzRiYWY2ZDkzNGYiLCJleHAiOjE3NjI3MzM4NTAsInJvbCI6W119.p_zH74WMB-fr-tuyYOd2_Xitlc4Nyt9Acpz_94DfTiXRN5Od17v2OnbC2mGN0Q8cY1XSocV_p-m3fFu65iJqaQ', None, datetime.datetime(2025, 11, 8, 8, 35, 7, 13213, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 9, 0, 17, 30, 949231, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-09 02:18:08,239] - gino.engine._SAEngine - 0| UPDATE amurbooking_bot_accounts SET auth_token=$1, updated_at=now() WHERE amurbooking_bot_accounts.id = $2 AND amurbooking_bot_accounts.phone = $3 RETURNING amurbooking_bot_accounts.auth_token
+base.py:1236 #INFO     [2025-11-09 02:18:08,239] - gino.engine._SAEngine - 0| ('Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhY3Rpdml0aWVzLXNlY3VyZS1hcGkiLCJhdWQiOiJhY3Rpdml0aWVzLXNlY3VyZS1hcHAiLCJzdWIiOiIzNTVmZGZhZC1iN ... (9 characters truncated) ... ctOTgxNy0xNzRiYWY2ZDkzNGYiLCJleHAiOjE3NjI3MzM4ODgsInJvbCI6W119.A0DDetz7277ARCTDai3X8EhiI8IUtji-dgOFTmwuIRIDT4PL8yVA2u6O12ZU7WnTCZDCAizfCdPTsKxo7RQK5Q', 2, '+79638042595')
+base.py:769 #INFO     [2025-11-09 02:18:08,239] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-09 02:18:08,241] - gino.engine._SAEngine - 0| Col ('auth_token',)
+result.py:1260 #DEBUG    [2025-11-09 02:18:08,241] - gino.engine._SAEngine - 0| Row ('Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhY3Rpdml0aWVzLXNlY3VyZS1hcGkiLCJhdWQiOiJhY3Rpdml0aWVzLXNlY3VyZS1hcHAiLCJzdWIiOiIzNTVmZGZhZC1iN ... (9 characters truncated) ... ctOTgxNy0xNzRiYWY2ZDkzNGYiLCJleHAiOjE3NjI3MzM4ODgsInJvbCI6W119.A0DDetz7277ARCTDai3X8EhiI8IUtji-dgOFTmwuIRIDT4PL8yVA2u6O12ZU7WnTCZDCAizfCdPTsKxo7RQK5Q',)
+browser_processing.py:277 #INFO     [2025-11-09 02:18:08,242] - root - 0| Успешно вошел в аккаунт №2!
+base_events.py:1758 #ERROR    [2025-11-09 02:18:08,242] - asyncio - 0| Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000002A2DEC1B5E0>
+base_events.py:1758 #ERROR    [2025-11-09 02:18:08,242] - asyncio - 0| Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x000002A2DEEA6D40>, 17665.109)])']
+connector: <aiohttp.connector.TCPConnector object at 0x000002A2DEC1B640>

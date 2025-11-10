@@ -2,16 +2,17 @@ from typing import Optional, Union, List
 from datetime import datetime
 
 from asyncpg import UniqueViolationError
+from sqlalchemy import and_, select, func
 
 from config import Config
+from .db_gino import db
 from .schemas import *
 
 
 class DbAccount:
     def __init__(
             self, db_id: Optional[int] = None, phone: Optional[str] = None, password: Optional[str] = None,
-            proxy: Optional[str] = None, auth_token: Optional[str] = None, is_work: Optional[bool] = None,
-            status: Optional[int] = None
+            proxy: Optional[str] = None, auth_token: Optional[str] = None, is_work: Optional[bool] = None
     ):
         self.db_id = db_id
         self.phone = phone
@@ -54,13 +55,13 @@ class DbAccount:
             Config.logger.error(ex)
             return False
 
-    async def update(self, **kwargs) -> bool:
+    async def update(self, **kwargs) -> Union[Booking, bool]:
         try:
             if not kwargs:
                 return False
 
             target = await self.select()
-            return bool(await target.update(**kwargs).apply())
+            return await target.update(**kwargs).apply()
 
         except Exception as ex:
             Config.logger.error(ex)
@@ -134,31 +135,53 @@ class DbBooking:
             Config.logger.error(ex)
             return False
 
-    async def select(self) -> Union[Booking, List[Booking], None, bool]:
+    async def select(self, count_records: bool = False) -> Union[Booking, List[Booking], None, bool]:
         try:
             q = Booking.query
             if self.db_id is not None:
                 return await q.where(Booking.id == self.db_id).gino.first()
 
+            filters = []
             if self.status is not None:
-                return await q.where(Booking.status == self.status).gino.all()
+                filters.append(Booking.status == self.status)
 
             if self.account_id is not None:
-                return await q.where(Booking.account_id == self.account_id).gino.all()
+                filters.append(Booking.account_id == self.account_id)
 
-            return await q.gino.all()
+            if self.truck is not None:
+                filters.append(Booking.truck == self.truck)
+
+            if self.good_character is not None:
+                filters.append(Booking.good_character == self.good_character)
+
+            if self.book_date is not None:
+                filters.append(Booking.book_date == self.book_date)
+
+            if self.time_duration is not None:
+                filters.append(Booking.time_duration == self.time_duration)
+
+            if filters:
+                q = q.where(and_(*filters))
+
+            if count_records:
+                count_query = select([func.count()]).select_from(q.alias('subq'))
+                return await db.scalar(count_query)
+
+            else:
+                return await q.gino.all()
 
         except Exception as ex:
             Config.logger.error(ex)
             return False
 
-    async def update(self, **kwargs) -> bool:
+    async def update(self, **kwargs) -> Union[Booking, bool]:
         try:
             if not kwargs:
                 return False
 
             target = await self.select()
-            return bool(await target.update(**kwargs).apply())
+            await target.update(**kwargs).apply()
+            return target
 
         except Exception as ex:
             Config.logger.error(ex)
