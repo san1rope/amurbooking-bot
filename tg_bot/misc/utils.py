@@ -1,8 +1,11 @@
+import asyncio
 import os
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Union, Dict, Optional, List
+from queue import Empty
+from typing import Union, Dict, Optional, List, Any
+from multiprocessing import Queue
 
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import InlineKeyboardMarkup
@@ -10,10 +13,25 @@ from aiogram.types import InlineKeyboardMarkup
 from config import Config
 from tg_bot.db_models.quick_commands import DbMessageId
 from tg_bot.db_models.schemas import MessageId
-from tg_bot.misc.models import ProxyData
+from tg_bot.misc.models import ProxyData, QueueMessage
+
+BOOKING_PROCESSES: Dict[int, Dict[str, Any]] = {}
 
 
 class Utils:
+    PROCESS_STR = "process"
+    QUEUE_STR = "queue"
+
+    STOP_PROCESS = "stop_process"
+
+    @staticmethod
+    async def get_message_from_queue(queue: Queue) -> Union[QueueMessage, None]:
+        try:
+            msg = queue.get_nowait()
+            return msg
+
+        except Empty:
+            return None
 
     @staticmethod
     async def send_step_message(user_id: int, text: str, markup: Optional[InlineKeyboardMarkup] = None):
@@ -71,7 +89,9 @@ class Utils:
         log_filepath.touch(exist_ok=True)
 
         logger = logging.getLogger()
-        logger.setLevel(logging.DEBUG)
+        logger.setLevel(logging.INFO)
+        logging.getLogger("aiogram.event").setLevel(logging.WARNING)
+        logging.getLogger("gino").setLevel(logging.WARNING)
         formatter = logging.Formatter(u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - ' + str(
             process_id) + '| %(message)s')
 
@@ -108,10 +128,14 @@ class Utils:
                         Config.logger.error(f"Прокси указано в неверном формате: {proxy}")
                         continue
 
-                # proxies_objs[len(proxies_objs)] = ProxyData(
-                #     id=proxy_id, host=host, port=port, username=username, password=password
-                # )
-
                 proxies_objs.append(ProxyData(host=host, port=port, username=username, password=password))
 
         return proxies_objs
+
+    @staticmethod
+    def wrapper(func, *args, **kwargs) -> Any:
+        try:
+            return asyncio.run(func(*args, **kwargs))
+
+        except KeyboardInterrupt:
+            Config.logger.info("Keyboard interrupt: wrapper")

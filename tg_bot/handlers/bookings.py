@@ -29,10 +29,19 @@ async def show_bookings_list(message: Union[types.Message, types.CallbackQuery],
         await message.answer()
         message = message.message
 
-    db_bookings = await DbBooking(status=0).select()
-    if not db_bookings:
+    result_bookings = []
+
+    db_bookings_1 = await DbBooking(status=1).select()
+    if db_bookings_1:
+        result_bookings.extend(db_bookings_1)
+
+    db_bookings_0 = await DbBooking(status=0).select()
+    if db_bookings_0:
+        result_bookings.extend(db_bookings_0)
+
+    if not result_bookings:
         text = [
-            "<b>ℹ️ У вас нету брони в работе!</b>",
+            "<b>ℹ️ У вас нету записей на бронь!</b>",
             "\n<b>Вы можете быстро добавить заявку на бронь по кнопке под сообщением ⬇️</b>"
         ]
 
@@ -43,7 +52,7 @@ async def show_bookings_list(message: Union[types.Message, types.CallbackQuery],
         return
 
     book_texts = []
-    for db_book in db_bookings:
+    for db_book in result_bookings:
         book_texts.append([
             "\n".join([
                 f"<b>🆔 Бронь №{hcode(str(db_book.id))}</b>",
@@ -65,7 +74,7 @@ async def show_bookings_list(message: Union[types.Message, types.CallbackQuery],
 
     main_text = [
         "<b>❇️ Список записей на бронь</b>",
-        f"\n<b>ℹ️ Количество активных записей: {len(db_bookings)}</b>",
+        f"\n<b>ℹ️ Количество активных записей: {len(result_bookings)}</b>",
         "\n<b>Используйте кнопки под сообщениями ⬇️</b>"
     ]
 

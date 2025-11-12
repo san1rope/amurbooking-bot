@@ -1,0 +1,11 @@
+db_gino.py:41 #INFO     [2025-11-12 00:52:17,449] - tg_bot.db_models.db_gino - 0| Connecting to PostgreSQL...
+main.py:30 #INFO     [2025-11-12 00:52:17,993] - root - 0| Подгрузил proxies.txt! Количество прокси: 1
+bookings_status.py:12 #INFO     [2025-11-12 00:52:18,115] - root - 0| Чекер состояний запущен!
+dispatcher.py:566 #INFO     [2025-11-12 00:52:18,151] - aiogram.dispatcher - 0| Start polling
+dispatcher.py:363 #INFO     [2025-11-12 00:52:18,188] - aiogram.dispatcher - 0| Run polling for bot @amurbooking_test_bot id=8065319444 - 'amurbooking-bot'
+bookings_status.py:42 #INFO     [2025-11-12 00:52:18,636] - root - 0| Запустил новый процесс для записи №6!
+bookings_status.py:42 #INFO     [2025-11-12 00:52:22,182] - root - 0| Запустил новый процесс для записи №6!
+bookings_status.py:42 #INFO     [2025-11-12 00:52:25,735] - root - 0| Запустил новый процесс для записи №6!
+dispatcher.py:395 #INFO     [2025-11-12 00:52:27,327] - aiogram.dispatcher - 0| Polling stopped for bot @amurbooking_test_bot id=8065319444 - 'amurbooking-bot'
+dispatcher.py:594 #INFO     [2025-11-12 00:52:27,327] - aiogram.dispatcher - 0| Polling stopped
+main.py:51 #INFO     [2025-11-12 00:52:27,587] - root - 0| Keyboard interrupt: main
