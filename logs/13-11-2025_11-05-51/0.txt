@@ -1,0 +1,618 @@
+db_gino.py:41 #INFO     [2025-11-13 11:05:51,241] - tg_bot.db_models.db_gino - 0| Connecting to PostgreSQL...
+base.py:1234 #INFO     [2025-11-13 11:05:51,633] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-13 11:05:51,633] - gino.engine._SAEngine - 0| ('amurbooking_bot_messages',)
+result.py:809 #DEBUG    [2025-11-13 11:05:51,638] - gino.engine._SAEngine - 0| Col ('relname',)
+result.py:1260 #DEBUG    [2025-11-13 11:05:51,638] - gino.engine._SAEngine - 0| Row ('amurbooking_bot_messages',)
+base.py:1234 #INFO     [2025-11-13 11:05:51,638] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-13 11:05:51,640] - gino.engine._SAEngine - 0| ('amurbooking_bot_accounts',)
+result.py:809 #DEBUG    [2025-11-13 11:05:51,641] - gino.engine._SAEngine - 0| Col ('relname',)
+result.py:1260 #DEBUG    [2025-11-13 11:05:51,641] - gino.engine._SAEngine - 0| Row ('amurbooking_bot_accounts',)
+base.py:1234 #INFO     [2025-11-13 11:05:51,641] - gino.engine._SAEngine - 0| select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=$1
+base.py:1236 #INFO     [2025-11-13 11:05:51,641] - gino.engine._SAEngine - 0| ('amurbooking_bot_bookings',)
+result.py:809 #DEBUG    [2025-11-13 11:05:51,642] - gino.engine._SAEngine - 0| Col ('relname',)
+result.py:1260 #DEBUG    [2025-11-13 11:05:51,642] - gino.engine._SAEngine - 0| Row ('amurbooking_bot_bookings',)
+main.py:29 #INFO     [2025-11-13 11:05:51,644] - root - 0| Подгрузил proxies.txt! Количество прокси: 1
+dispatcher.py:566 #INFO     [2025-11-13 11:05:52,024] - aiogram.dispatcher - 0| Start polling
+dispatcher.py:363 #INFO     [2025-11-13 11:05:52,082] - aiogram.dispatcher - 0| Run polling for bot @amurbooking_test_bot id=8065319444 - 'amurbooking-bot'
+start.py:17 #INFO     [2025-11-13 11:06:00,366] - root - 0| Handler called. cmd_start. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:06:00,367] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:00,368] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:06:00,370] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+base.py:1234 #INFO     [2025-11-13 11:06:00,843] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:06:00,843] - gino.engine._SAEngine - 0| (1643710214, 570)
+base.py:769 #INFO     [2025-11-13 11:06:00,843] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:00,848] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:00,848] - gino.engine._SAEngine - 0| Row (1, 1643710214, 570, datetime.datetime(2025, 11, 13, 9, 6, 0, 844534, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 0, 844534, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:06:00,849] - aiogram.event - 0| Update id=465957472 is handled. Duration 484 ms by bot id=8065319444
+accounts.py:23 #INFO     [2025-11-13 11:06:01,861] - root - 0| Handler called. show_accounts_list. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:06:01,861] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_accounts.id, amurbooking_bot_accounts.phone, amurbooking_bot_accounts.password, amurbooking_bot_accounts.proxy, amurbooking_bot_accounts.auth_token, amurbooking_bot_accounts.is_work, amurbooking_bot_accounts.created_at, amurbooking_bot_accounts.updated_at 
+FROM amurbooking_bot_accounts
+base.py:1236 #INFO     [2025-11-13 11:06:01,862] - gino.engine._SAEngine - 0| ()
+result.py:809 #DEBUG    [2025-11-13 11:06:01,864] - gino.engine._SAEngine - 0| Col ('id', 'phone', 'password', 'proxy', 'auth_token', 'is_work', 'created_at', 'updated_at')
+base.py:1234 #INFO     [2025-11-13 11:06:01,865] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:01,865] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:06:01,866] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:01,866] - gino.engine._SAEngine - 0| Row (1, 1643710214, 570, datetime.datetime(2025, 11, 13, 9, 6, 0, 844534, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 0, 844534, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:06:01,968] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:01,968] - gino.engine._SAEngine - 0| (1,)
+base.py:769 #INFO     [2025-11-13 11:06:01,968] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:01,972] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:06:02,167] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:06:02,167] - gino.engine._SAEngine - 0| (1643710214, 572)
+base.py:769 #INFO     [2025-11-13 11:06:02,167] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:02,169] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:02,169] - gino.engine._SAEngine - 0| Row (2, 1643710214, 572, datetime.datetime(2025, 11, 13, 9, 6, 2, 168183, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 2, 168183, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:06:02,169] - aiogram.event - 0| Update id=465957473 is handled. Duration 312 ms by bot id=8065319444
+accounts.py:143 #INFO     [2025-11-13 11:06:03,263] - root - 0| Handler called. add_account. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:06:03,263] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:03,264] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:06:03,264] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:03,265] - gino.engine._SAEngine - 0| Row (2, 1643710214, 572, datetime.datetime(2025, 11, 13, 9, 6, 2, 168183, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 2, 168183, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:06:03,355] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:03,355] - gino.engine._SAEngine - 0| (2,)
+base.py:769 #INFO     [2025-11-13 11:06:03,355] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:03,358] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:06:03,495] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:06:03,495] - gino.engine._SAEngine - 0| (1643710214, 573)
+base.py:769 #INFO     [2025-11-13 11:06:03,495] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:03,497] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:03,498] - gino.engine._SAEngine - 0| Row (3, 1643710214, 573, datetime.datetime(2025, 11, 13, 9, 6, 3, 496187, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 3, 496187, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:06:03,498] - aiogram.event - 0| Update id=465957474 is handled. Duration 327 ms by bot id=8065319444
+accounts.py:23 #INFO     [2025-11-13 11:06:08,741] - root - 0| Handler called. show_accounts_list. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:06:08,921] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_accounts.id, amurbooking_bot_accounts.phone, amurbooking_bot_accounts.password, amurbooking_bot_accounts.proxy, amurbooking_bot_accounts.auth_token, amurbooking_bot_accounts.is_work, amurbooking_bot_accounts.created_at, amurbooking_bot_accounts.updated_at 
+FROM amurbooking_bot_accounts
+base.py:1236 #INFO     [2025-11-13 11:06:08,921] - gino.engine._SAEngine - 0| ()
+result.py:809 #DEBUG    [2025-11-13 11:06:08,921] - gino.engine._SAEngine - 0| Col ('id', 'phone', 'password', 'proxy', 'auth_token', 'is_work', 'created_at', 'updated_at')
+base.py:1234 #INFO     [2025-11-13 11:06:08,923] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:08,923] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:06:08,923] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:08,924] - gino.engine._SAEngine - 0| Row (3, 1643710214, 573, datetime.datetime(2025, 11, 13, 9, 6, 3, 496187, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 3, 496187, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:06:09,029] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:09,030] - gino.engine._SAEngine - 0| (3,)
+base.py:769 #INFO     [2025-11-13 11:06:09,030] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:09,033] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:06:09,133] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:06:09,133] - gino.engine._SAEngine - 0| (1643710214, 574)
+base.py:769 #INFO     [2025-11-13 11:06:09,133] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:09,135] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:09,135] - gino.engine._SAEngine - 0| Row (4, 1643710214, 574, datetime.datetime(2025, 11, 13, 9, 6, 9, 134359, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 9, 134359, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:06:09,136] - aiogram.event - 0| Update id=465957475 is handled. Duration 391 ms by bot id=8065319444
+accounts.py:143 #INFO     [2025-11-13 11:06:11,170] - root - 0| Handler called. add_account. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:06:11,172] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:11,172] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:06:11,172] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:11,172] - gino.engine._SAEngine - 0| Row (4, 1643710214, 574, datetime.datetime(2025, 11, 13, 9, 6, 9, 134359, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 9, 134359, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:06:11,312] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:11,312] - gino.engine._SAEngine - 0| (4,)
+base.py:769 #INFO     [2025-11-13 11:06:11,312] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:11,314] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:06:11,481] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:06:11,481] - gino.engine._SAEngine - 0| (1643710214, 575)
+base.py:769 #INFO     [2025-11-13 11:06:11,482] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:11,483] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:11,483] - gino.engine._SAEngine - 0| Row (5, 1643710214, 575, datetime.datetime(2025, 11, 13, 9, 6, 11, 482727, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 11, 482727, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:06:11,484] - aiogram.event - 0| Update id=465957476 is handled. Duration 452 ms by bot id=8065319444
+accounts.py:23 #INFO     [2025-11-13 11:06:12,264] - root - 0| Handler called. show_accounts_list. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:06:12,431] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_accounts.id, amurbooking_bot_accounts.phone, amurbooking_bot_accounts.password, amurbooking_bot_accounts.proxy, amurbooking_bot_accounts.auth_token, amurbooking_bot_accounts.is_work, amurbooking_bot_accounts.created_at, amurbooking_bot_accounts.updated_at 
+FROM amurbooking_bot_accounts
+base.py:1236 #INFO     [2025-11-13 11:06:12,431] - gino.engine._SAEngine - 0| ()
+result.py:809 #DEBUG    [2025-11-13 11:06:12,431] - gino.engine._SAEngine - 0| Col ('id', 'phone', 'password', 'proxy', 'auth_token', 'is_work', 'created_at', 'updated_at')
+base.py:1234 #INFO     [2025-11-13 11:06:12,432] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:12,432] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:06:12,433] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:12,433] - gino.engine._SAEngine - 0| Row (5, 1643710214, 575, datetime.datetime(2025, 11, 13, 9, 6, 11, 482727, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 11, 482727, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:06:12,644] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:12,644] - gino.engine._SAEngine - 0| (5,)
+base.py:769 #INFO     [2025-11-13 11:06:12,644] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:12,645] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:06:12,822] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:06:12,822] - gino.engine._SAEngine - 0| (1643710214, 576)
+base.py:769 #INFO     [2025-11-13 11:06:12,823] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:12,825] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:12,825] - gino.engine._SAEngine - 0| Row (6, 1643710214, 576, datetime.datetime(2025, 11, 13, 9, 6, 12, 824282, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 12, 824282, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:06:12,826] - aiogram.event - 0| Update id=465957477 is handled. Duration 562 ms by bot id=8065319444
+start.py:17 #INFO     [2025-11-13 11:06:14,251] - root - 0| Handler called. cmd_start. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:06:14,315] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:14,315] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:06:14,316] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:14,316] - gino.engine._SAEngine - 0| Row (6, 1643710214, 576, datetime.datetime(2025, 11, 13, 9, 6, 12, 824282, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 12, 824282, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:06:14,385] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:14,385] - gino.engine._SAEngine - 0| (6,)
+base.py:769 #INFO     [2025-11-13 11:06:14,386] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:14,388] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:06:14,479] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:06:14,479] - gino.engine._SAEngine - 0| (1643710214, 577)
+base.py:769 #INFO     [2025-11-13 11:06:14,480] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:14,481] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:14,481] - gino.engine._SAEngine - 0| Row (7, 1643710214, 577, datetime.datetime(2025, 11, 13, 9, 6, 14, 480638, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 14, 480638, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:06:14,482] - aiogram.event - 0| Update id=465957478 is handled. Duration 234 ms by bot id=8065319444
+bookings.py:25 #INFO     [2025-11-13 11:06:16,877] - root - 0| Handler called. show_bookings_list. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:06:16,879] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_bookings.id, amurbooking_bot_bookings.status, amurbooking_bot_bookings.account_id, amurbooking_bot_bookings.truck, amurbooking_bot_bookings.good_character, amurbooking_bot_bookings.book_date, amurbooking_bot_bookings.time_duration, amurbooking_bot_bookings.created_at, amurbooking_bot_bookings.updated_at 
+FROM amurbooking_bot_bookings 
+WHERE amurbooking_bot_bookings.status = $1
+base.py:1236 #INFO     [2025-11-13 11:06:16,879] - gino.engine._SAEngine - 0| (0,)
+result.py:809 #DEBUG    [2025-11-13 11:06:16,883] - gino.engine._SAEngine - 0| Col ('id', 'status', 'account_id', 'truck', 'good_character', 'book_date', 'time_duration', 'created_at', 'updated_at')
+base.py:1234 #INFO     [2025-11-13 11:06:16,885] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:16,885] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:06:16,886] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:16,886] - gino.engine._SAEngine - 0| Row (7, 1643710214, 577, datetime.datetime(2025, 11, 13, 9, 6, 14, 480638, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 14, 480638, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:06:16,959] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:16,960] - gino.engine._SAEngine - 0| (7,)
+base.py:769 #INFO     [2025-11-13 11:06:16,960] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:16,962] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:06:17,051] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:06:17,052] - gino.engine._SAEngine - 0| (1643710214, 579)
+base.py:769 #INFO     [2025-11-13 11:06:17,052] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:17,053] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:17,054] - gino.engine._SAEngine - 0| Row (8, 1643710214, 579, datetime.datetime(2025, 11, 13, 9, 6, 17, 52938, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 17, 52938, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:06:17,054] - aiogram.event - 0| Update id=465957479 is handled. Duration 188 ms by bot id=8065319444
+bookings.py:278 #INFO     [2025-11-13 11:06:17,955] - root - 0| Handler called. add_booking. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:06:17,955] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_accounts.id, amurbooking_bot_accounts.phone, amurbooking_bot_accounts.password, amurbooking_bot_accounts.proxy, amurbooking_bot_accounts.auth_token, amurbooking_bot_accounts.is_work, amurbooking_bot_accounts.created_at, amurbooking_bot_accounts.updated_at 
+FROM amurbooking_bot_accounts
+base.py:1236 #INFO     [2025-11-13 11:06:17,955] - gino.engine._SAEngine - 0| ()
+result.py:809 #DEBUG    [2025-11-13 11:06:17,956] - gino.engine._SAEngine - 0| Col ('id', 'phone', 'password', 'proxy', 'auth_token', 'is_work', 'created_at', 'updated_at')
+base.py:1234 #INFO     [2025-11-13 11:06:17,957] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:17,958] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:06:17,958] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:17,958] - gino.engine._SAEngine - 0| Row (8, 1643710214, 579, datetime.datetime(2025, 11, 13, 9, 6, 17, 52938, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 17, 52938, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:06:18,146] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:18,146] - gino.engine._SAEngine - 0| (8,)
+base.py:769 #INFO     [2025-11-13 11:06:18,147] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:18,148] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:06:18,247] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:06:18,247] - gino.engine._SAEngine - 0| (1643710214, 580)
+base.py:769 #INFO     [2025-11-13 11:06:18,248] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:18,250] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:18,250] - gino.engine._SAEngine - 0| Row (9, 1643710214, 580, datetime.datetime(2025, 11, 13, 9, 6, 18, 249312, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 18, 249312, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:06:18,251] - aiogram.event - 0| Update id=465957480 is handled. Duration 358 ms by bot id=8065319444
+bookings.py:25 #INFO     [2025-11-13 11:06:20,884] - root - 0| Handler called. show_bookings_list. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:06:21,003] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_bookings.id, amurbooking_bot_bookings.status, amurbooking_bot_bookings.account_id, amurbooking_bot_bookings.truck, amurbooking_bot_bookings.good_character, amurbooking_bot_bookings.book_date, amurbooking_bot_bookings.time_duration, amurbooking_bot_bookings.created_at, amurbooking_bot_bookings.updated_at 
+FROM amurbooking_bot_bookings 
+WHERE amurbooking_bot_bookings.status = $1
+base.py:1236 #INFO     [2025-11-13 11:06:21,003] - gino.engine._SAEngine - 0| (0,)
+result.py:809 #DEBUG    [2025-11-13 11:06:21,004] - gino.engine._SAEngine - 0| Col ('id', 'status', 'account_id', 'truck', 'good_character', 'book_date', 'time_duration', 'created_at', 'updated_at')
+base.py:1234 #INFO     [2025-11-13 11:06:21,006] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:21,006] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:06:21,007] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:21,007] - gino.engine._SAEngine - 0| Row (9, 1643710214, 580, datetime.datetime(2025, 11, 13, 9, 6, 18, 249312, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 18, 249312, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:06:21,080] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:21,080] - gino.engine._SAEngine - 0| (9,)
+base.py:769 #INFO     [2025-11-13 11:06:21,080] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:21,083] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:06:21,163] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:06:21,163] - gino.engine._SAEngine - 0| (1643710214, 581)
+base.py:769 #INFO     [2025-11-13 11:06:21,163] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:21,165] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:21,165] - gino.engine._SAEngine - 0| Row (10, 1643710214, 581, datetime.datetime(2025, 11, 13, 9, 6, 21, 164313, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 21, 164313, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:06:21,166] - aiogram.event - 0| Update id=465957481 is handled. Duration 280 ms by bot id=8065319444
+start.py:17 #INFO     [2025-11-13 11:06:22,207] - root - 0| Handler called. cmd_start. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:06:22,268] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:22,268] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:06:22,269] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:22,269] - gino.engine._SAEngine - 0| Row (10, 1643710214, 581, datetime.datetime(2025, 11, 13, 9, 6, 21, 164313, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 21, 164313, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:06:22,334] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:22,334] - gino.engine._SAEngine - 0| (10,)
+base.py:769 #INFO     [2025-11-13 11:06:22,334] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:22,335] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:06:22,468] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:06:22,468] - gino.engine._SAEngine - 0| (1643710214, 582)
+base.py:769 #INFO     [2025-11-13 11:06:22,468] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:22,470] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:22,470] - gino.engine._SAEngine - 0| Row (11, 1643710214, 582, datetime.datetime(2025, 11, 13, 9, 6, 22, 469760, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 22, 469760, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:06:22,471] - aiogram.event - 0| Update id=465957482 is handled. Duration 265 ms by bot id=8065319444
+accounts.py:23 #INFO     [2025-11-13 11:06:24,398] - root - 0| Handler called. show_accounts_list. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:06:24,398] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_accounts.id, amurbooking_bot_accounts.phone, amurbooking_bot_accounts.password, amurbooking_bot_accounts.proxy, amurbooking_bot_accounts.auth_token, amurbooking_bot_accounts.is_work, amurbooking_bot_accounts.created_at, amurbooking_bot_accounts.updated_at 
+FROM amurbooking_bot_accounts
+base.py:1236 #INFO     [2025-11-13 11:06:24,398] - gino.engine._SAEngine - 0| ()
+result.py:809 #DEBUG    [2025-11-13 11:06:24,399] - gino.engine._SAEngine - 0| Col ('id', 'phone', 'password', 'proxy', 'auth_token', 'is_work', 'created_at', 'updated_at')
+base.py:1234 #INFO     [2025-11-13 11:06:24,400] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:24,400] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:06:24,401] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:24,401] - gino.engine._SAEngine - 0| Row (11, 1643710214, 582, datetime.datetime(2025, 11, 13, 9, 6, 22, 469760, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 22, 469760, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:06:24,464] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:24,465] - gino.engine._SAEngine - 0| (11,)
+base.py:769 #INFO     [2025-11-13 11:06:24,465] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:24,467] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:06:24,562] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:06:24,562] - gino.engine._SAEngine - 0| (1643710214, 584)
+base.py:769 #INFO     [2025-11-13 11:06:24,563] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:24,565] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:24,566] - gino.engine._SAEngine - 0| Row (12, 1643710214, 584, datetime.datetime(2025, 11, 13, 9, 6, 24, 564582, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 24, 564582, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:06:24,566] - aiogram.event - 0| Update id=465957483 is handled. Duration 172 ms by bot id=8065319444
+start.py:17 #INFO     [2025-11-13 11:06:33,376] - root - 0| Handler called. cmd_start. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:06:33,495] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:33,495] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:06:33,496] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:33,496] - gino.engine._SAEngine - 0| Row (12, 1643710214, 584, datetime.datetime(2025, 11, 13, 9, 6, 24, 564582, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 24, 564582, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:06:33,561] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:33,561] - gino.engine._SAEngine - 0| (12,)
+base.py:769 #INFO     [2025-11-13 11:06:33,561] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:33,564] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:06:33,640] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:06:33,640] - gino.engine._SAEngine - 0| (1643710214, 585)
+base.py:769 #INFO     [2025-11-13 11:06:33,640] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:33,642] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:33,642] - gino.engine._SAEngine - 0| Row (13, 1643710214, 585, datetime.datetime(2025, 11, 13, 9, 6, 33, 641499, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 33, 641499, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:06:33,643] - aiogram.event - 0| Update id=465957484 is handled. Duration 282 ms by bot id=8065319444
+accounts.py:23 #INFO     [2025-11-13 11:06:34,798] - root - 0| Handler called. show_accounts_list. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:06:34,799] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_accounts.id, amurbooking_bot_accounts.phone, amurbooking_bot_accounts.password, amurbooking_bot_accounts.proxy, amurbooking_bot_accounts.auth_token, amurbooking_bot_accounts.is_work, amurbooking_bot_accounts.created_at, amurbooking_bot_accounts.updated_at 
+FROM amurbooking_bot_accounts
+base.py:1236 #INFO     [2025-11-13 11:06:34,799] - gino.engine._SAEngine - 0| ()
+result.py:809 #DEBUG    [2025-11-13 11:06:34,799] - gino.engine._SAEngine - 0| Col ('id', 'phone', 'password', 'proxy', 'auth_token', 'is_work', 'created_at', 'updated_at')
+base.py:1234 #INFO     [2025-11-13 11:06:34,800] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:34,800] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:06:34,801] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:34,801] - gino.engine._SAEngine - 0| Row (13, 1643710214, 585, datetime.datetime(2025, 11, 13, 9, 6, 33, 641499, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 33, 641499, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:06:34,900] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:34,900] - gino.engine._SAEngine - 0| (13,)
+base.py:769 #INFO     [2025-11-13 11:06:34,900] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:34,903] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:06:34,988] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:06:34,988] - gino.engine._SAEngine - 0| (1643710214, 587)
+base.py:769 #INFO     [2025-11-13 11:06:34,988] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:34,991] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:34,991] - gino.engine._SAEngine - 0| Row (14, 1643710214, 587, datetime.datetime(2025, 11, 13, 9, 6, 34, 990188, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 34, 990188, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:06:34,992] - aiogram.event - 0| Update id=465957485 is handled. Duration 202 ms by bot id=8065319444
+accounts.py:143 #INFO     [2025-11-13 11:06:35,694] - root - 0| Handler called. add_account. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:06:35,695] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:35,695] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:06:35,696] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:35,696] - gino.engine._SAEngine - 0| Row (14, 1643710214, 587, datetime.datetime(2025, 11, 13, 9, 6, 34, 990188, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 34, 990188, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:06:35,789] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:06:35,790] - gino.engine._SAEngine - 0| (14,)
+base.py:769 #INFO     [2025-11-13 11:06:35,790] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:35,793] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:06:35,906] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:06:35,906] - gino.engine._SAEngine - 0| (1643710214, 588)
+base.py:769 #INFO     [2025-11-13 11:06:35,906] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:06:35,908] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:06:35,908] - gino.engine._SAEngine - 0| Row (15, 1643710214, 588, datetime.datetime(2025, 11, 13, 9, 6, 35, 907739, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 35, 907739, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:06:35,909] - aiogram.event - 0| Update id=465957486 is handled. Duration 297 ms by bot id=8065319444
+accounts.py:162 #INFO     [2025-11-13 11:07:09,876] - root - 0| Handler called. account_phone. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:07:09,877] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:07:09,877] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:07:09,878] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:07:09,878] - gino.engine._SAEngine - 0| Row (15, 1643710214, 588, datetime.datetime(2025, 11, 13, 9, 6, 35, 907739, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 6, 35, 907739, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:07:10,015] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:07:10,015] - gino.engine._SAEngine - 0| (15,)
+base.py:769 #INFO     [2025-11-13 11:07:10,015] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:07:10,017] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:07:10,158] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:07:10,159] - gino.engine._SAEngine - 0| (1643710214, 590)
+base.py:769 #INFO     [2025-11-13 11:07:10,159] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:07:10,161] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:07:10,161] - gino.engine._SAEngine - 0| Row (16, 1643710214, 590, datetime.datetime(2025, 11, 13, 9, 7, 10, 160132, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 7, 10, 160132, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:07:10,162] - aiogram.event - 0| Update id=465957487 is handled. Duration 297 ms by bot id=8065319444
+accounts.py:195 #INFO     [2025-11-13 11:07:44,737] - root - 0| Handler called. account_password. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:07:44,738] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:07:44,738] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:07:44,739] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:07:44,739] - gino.engine._SAEngine - 0| Row (16, 1643710214, 590, datetime.datetime(2025, 11, 13, 9, 7, 10, 160132, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 7, 10, 160132, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:07:44,952] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:07:44,952] - gino.engine._SAEngine - 0| (16,)
+base.py:769 #INFO     [2025-11-13 11:07:44,952] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:07:44,955] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:07:45,091] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:07:45,092] - gino.engine._SAEngine - 0| (1643710214, 592)
+base.py:769 #INFO     [2025-11-13 11:07:45,092] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:07:45,093] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:07:45,094] - gino.engine._SAEngine - 0| Row (17, 1643710214, 592, datetime.datetime(2025, 11, 13, 9, 7, 45, 93448, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 7, 45, 93448, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:07:45,095] - aiogram.event - 0| Update id=465957488 is handled. Duration 375 ms by bot id=8065319444
+accounts.py:224 #INFO     [2025-11-13 11:07:48,987] - root - 0| Handler called. confirm_add_account. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:07:48,988] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_accounts.id, amurbooking_bot_accounts.phone, amurbooking_bot_accounts.password, amurbooking_bot_accounts.proxy, amurbooking_bot_accounts.auth_token, amurbooking_bot_accounts.is_work, amurbooking_bot_accounts.created_at, amurbooking_bot_accounts.updated_at 
+FROM amurbooking_bot_accounts 
+WHERE amurbooking_bot_accounts.proxy IS NOT NULL
+base.py:1236 #INFO     [2025-11-13 11:07:48,988] - gino.engine._SAEngine - 0| ()
+result.py:809 #DEBUG    [2025-11-13 11:07:48,989] - gino.engine._SAEngine - 0| Col ('id', 'phone', 'password', 'proxy', 'auth_token', 'is_work', 'created_at', 'updated_at')
+base.py:1234 #INFO     [2025-11-13 11:07:48,990] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_accounts (phone, password, proxy, auth_token, is_work, updated_at) VALUES ($1, $2, $3, $4, $5, now()) RETURNING amurbooking_bot_accounts.id, amurbooking_bot_accounts.phone, amurbooking_bot_accounts.password, amurbooking_bot_accounts.proxy, amurbooking_bot_accounts.auth_token, amurbooking_bot_accounts.is_work, amurbooking_bot_accounts.created_at, amurbooking_bot_accounts.updated_at
+base.py:1236 #INFO     [2025-11-13 11:07:48,990] - gino.engine._SAEngine - 0| ('+79638042595', 'VovanR797$', '31.59.236.40:59100:valetinles:f5bay87SBb', None, None)
+base.py:769 #INFO     [2025-11-13 11:07:48,990] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:07:48,995] - gino.engine._SAEngine - 0| Col ('id', 'phone', 'password', 'proxy', 'auth_token', 'is_work', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:07:48,995] - gino.engine._SAEngine - 0| Row (1, '+79638042595', 'VovanR797$', '31.59.236.40:59100:valetinles:f5bay87SBb', None, None, datetime.datetime(2025, 11, 13, 9, 7, 48, 991985, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 7, 48, 991985, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:07:48,996] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:07:48,996] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:07:48,997] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:07:48,997] - gino.engine._SAEngine - 0| Row (17, 1643710214, 592, datetime.datetime(2025, 11, 13, 9, 7, 45, 93448, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 7, 45, 93448, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:07:49,098] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:07:49,098] - gino.engine._SAEngine - 0| (17,)
+base.py:769 #INFO     [2025-11-13 11:07:49,098] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:07:49,100] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:07:49,279] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:07:49,279] - gino.engine._SAEngine - 0| (1643710214, 593)
+base.py:769 #INFO     [2025-11-13 11:07:49,279] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:07:49,281] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:07:49,281] - gino.engine._SAEngine - 0| Row (18, 1643710214, 593, datetime.datetime(2025, 11, 13, 9, 7, 49, 280487, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 7, 49, 280487, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:07:49,282] - aiogram.event - 0| Update id=465957489 is handled. Duration 375 ms by bot id=8065319444
+accounts.py:23 #INFO     [2025-11-13 11:08:03,476] - root - 0| Handler called. show_accounts_list. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:08:03,547] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_accounts.id, amurbooking_bot_accounts.phone, amurbooking_bot_accounts.password, amurbooking_bot_accounts.proxy, amurbooking_bot_accounts.auth_token, amurbooking_bot_accounts.is_work, amurbooking_bot_accounts.created_at, amurbooking_bot_accounts.updated_at 
+FROM amurbooking_bot_accounts
+base.py:1236 #INFO     [2025-11-13 11:08:03,547] - gino.engine._SAEngine - 0| ()
+result.py:809 #DEBUG    [2025-11-13 11:08:03,548] - gino.engine._SAEngine - 0| Col ('id', 'phone', 'password', 'proxy', 'auth_token', 'is_work', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:03,548] - gino.engine._SAEngine - 0| Row (1, '+79638042595', 'VovanR797$', '31.59.236.40:59100:valetinles:f5bay87SBb', None, None, datetime.datetime(2025, 11, 13, 9, 7, 48, 991985, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 7, 48, 991985, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:08:03,549] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:03,549] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:08:03,550] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:03,550] - gino.engine._SAEngine - 0| Row (18, 1643710214, 593, datetime.datetime(2025, 11, 13, 9, 7, 49, 280487, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 7, 49, 280487, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:08:03,610] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:03,611] - gino.engine._SAEngine - 0| (18,)
+base.py:769 #INFO     [2025-11-13 11:08:03,611] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:03,613] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:08:03,696] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:08:03,696] - gino.engine._SAEngine - 0| (1643710214, 594)
+base.py:769 #INFO     [2025-11-13 11:08:03,696] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:03,698] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:03,698] - gino.engine._SAEngine - 0| Row (19, 1643710214, 594, datetime.datetime(2025, 11, 13, 9, 8, 3, 697090, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 3, 697090, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:08:03,794] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:08:03,795] - gino.engine._SAEngine - 0| (1643710214, 595)
+base.py:769 #INFO     [2025-11-13 11:08:03,795] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:03,797] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:03,797] - gino.engine._SAEngine - 0| Row (20, 1643710214, 595, datetime.datetime(2025, 11, 13, 9, 8, 3, 796569, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 3, 796569, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:08:03,798] - aiogram.event - 0| Update id=465957490 is handled. Duration 312 ms by bot id=8065319444
+start.py:17 #INFO     [2025-11-13 11:08:11,541] - root - 0| Handler called. cmd_start. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:08:11,601] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:11,601] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:08:11,602] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:11,602] - gino.engine._SAEngine - 0| Row (19, 1643710214, 594, datetime.datetime(2025, 11, 13, 9, 8, 3, 697090, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 3, 697090, tzinfo=datetime.timezone.utc))
+result.py:1260 #DEBUG    [2025-11-13 11:08:11,602] - gino.engine._SAEngine - 0| Row (20, 1643710214, 595, datetime.datetime(2025, 11, 13, 9, 8, 3, 796569, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 3, 796569, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:08:11,706] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:11,706] - gino.engine._SAEngine - 0| (19,)
+base.py:769 #INFO     [2025-11-13 11:08:11,707] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:11,710] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:08:11,775] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:11,775] - gino.engine._SAEngine - 0| (20,)
+base.py:769 #INFO     [2025-11-13 11:08:11,775] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:11,777] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:08:11,865] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:08:11,865] - gino.engine._SAEngine - 0| (1643710214, 596)
+base.py:769 #INFO     [2025-11-13 11:08:11,866] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:11,867] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:11,867] - gino.engine._SAEngine - 0| Row (21, 1643710214, 596, datetime.datetime(2025, 11, 13, 9, 8, 11, 866752, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 11, 866752, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:08:11,868] - aiogram.event - 0| Update id=465957491 is handled. Duration 327 ms by bot id=8065319444
+bookings.py:25 #INFO     [2025-11-13 11:08:13,243] - root - 0| Handler called. show_bookings_list. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:08:13,244] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_bookings.id, amurbooking_bot_bookings.status, amurbooking_bot_bookings.account_id, amurbooking_bot_bookings.truck, amurbooking_bot_bookings.good_character, amurbooking_bot_bookings.book_date, amurbooking_bot_bookings.time_duration, amurbooking_bot_bookings.created_at, amurbooking_bot_bookings.updated_at 
+FROM amurbooking_bot_bookings 
+WHERE amurbooking_bot_bookings.status = $1
+base.py:1236 #INFO     [2025-11-13 11:08:13,245] - gino.engine._SAEngine - 0| (0,)
+result.py:809 #DEBUG    [2025-11-13 11:08:13,246] - gino.engine._SAEngine - 0| Col ('id', 'status', 'account_id', 'truck', 'good_character', 'book_date', 'time_duration', 'created_at', 'updated_at')
+base.py:1234 #INFO     [2025-11-13 11:08:13,247] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:13,247] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:08:13,247] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:13,247] - gino.engine._SAEngine - 0| Row (21, 1643710214, 596, datetime.datetime(2025, 11, 13, 9, 8, 11, 866752, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 11, 866752, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:08:13,311] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:13,312] - gino.engine._SAEngine - 0| (21,)
+base.py:769 #INFO     [2025-11-13 11:08:13,312] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:13,315] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:08:13,397] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:08:13,397] - gino.engine._SAEngine - 0| (1643710214, 598)
+base.py:769 #INFO     [2025-11-13 11:08:13,397] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:13,399] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:13,399] - gino.engine._SAEngine - 0| Row (22, 1643710214, 598, datetime.datetime(2025, 11, 13, 9, 8, 13, 398159, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 13, 398159, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:08:13,400] - aiogram.event - 0| Update id=465957492 is handled. Duration 157 ms by bot id=8065319444
+bookings.py:278 #INFO     [2025-11-13 11:08:16,900] - root - 0| Handler called. add_booking. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:08:16,901] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_accounts.id, amurbooking_bot_accounts.phone, amurbooking_bot_accounts.password, amurbooking_bot_accounts.proxy, amurbooking_bot_accounts.auth_token, amurbooking_bot_accounts.is_work, amurbooking_bot_accounts.created_at, amurbooking_bot_accounts.updated_at 
+FROM amurbooking_bot_accounts
+base.py:1236 #INFO     [2025-11-13 11:08:16,901] - gino.engine._SAEngine - 0| ()
+result.py:809 #DEBUG    [2025-11-13 11:08:16,902] - gino.engine._SAEngine - 0| Col ('id', 'phone', 'password', 'proxy', 'auth_token', 'is_work', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:16,902] - gino.engine._SAEngine - 0| Row (1, '+79638042595', 'VovanR797$', '31.59.236.40:59100:valetinles:f5bay87SBb', None, None, datetime.datetime(2025, 11, 13, 9, 7, 48, 991985, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 7, 48, 991985, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:08:16,903] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:16,903] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:08:16,904] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:16,904] - gino.engine._SAEngine - 0| Row (22, 1643710214, 598, datetime.datetime(2025, 11, 13, 9, 8, 13, 398159, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 13, 398159, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:08:16,984] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:16,984] - gino.engine._SAEngine - 0| (22,)
+base.py:769 #INFO     [2025-11-13 11:08:16,985] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:16,987] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:08:17,073] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:08:17,073] - gino.engine._SAEngine - 0| (1643710214, 599)
+base.py:769 #INFO     [2025-11-13 11:08:17,074] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:17,076] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:17,076] - gino.engine._SAEngine - 0| Row (23, 1643710214, 599, datetime.datetime(2025, 11, 13, 9, 8, 17, 75224, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 17, 75224, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:08:17,078] - aiogram.event - 0| Update id=465957493 is handled. Duration 234 ms by bot id=8065319444
+bookings.py:310 #INFO     [2025-11-13 11:08:18,167] - root - 0| Handler called. select_account. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:08:18,168] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_accounts.id, amurbooking_bot_accounts.phone, amurbooking_bot_accounts.password, amurbooking_bot_accounts.proxy, amurbooking_bot_accounts.auth_token, amurbooking_bot_accounts.is_work, amurbooking_bot_accounts.created_at, amurbooking_bot_accounts.updated_at 
+FROM amurbooking_bot_accounts 
+WHERE amurbooking_bot_accounts.id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:18,168] - gino.engine._SAEngine - 0| (1,)
+result.py:809 #DEBUG    [2025-11-13 11:08:18,170] - gino.engine._SAEngine - 0| Col ('id', 'phone', 'password', 'proxy', 'auth_token', 'is_work', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:18,170] - gino.engine._SAEngine - 0| Row (1, '+79638042595', 'VovanR797$', '31.59.236.40:59100:valetinles:f5bay87SBb', None, None, datetime.datetime(2025, 11, 13, 9, 7, 48, 991985, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 7, 48, 991985, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:08:18,905] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_accounts.id, amurbooking_bot_accounts.phone, amurbooking_bot_accounts.password, amurbooking_bot_accounts.proxy, amurbooking_bot_accounts.auth_token, amurbooking_bot_accounts.is_work, amurbooking_bot_accounts.created_at, amurbooking_bot_accounts.updated_at 
+FROM amurbooking_bot_accounts 
+WHERE amurbooking_bot_accounts.id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:18,905] - gino.engine._SAEngine - 0| (1,)
+result.py:809 #DEBUG    [2025-11-13 11:08:18,905] - gino.engine._SAEngine - 0| Col ('id', 'phone', 'password', 'proxy', 'auth_token', 'is_work', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:18,906] - gino.engine._SAEngine - 0| Row (1, '+79638042595', 'VovanR797$', '31.59.236.40:59100:valetinles:f5bay87SBb', None, None, datetime.datetime(2025, 11, 13, 9, 7, 48, 991985, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 7, 48, 991985, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:08:18,907] - gino.engine._SAEngine - 0| UPDATE amurbooking_bot_accounts SET auth_token=$1, updated_at=now() WHERE amurbooking_bot_accounts.id = $2 AND amurbooking_bot_accounts.phone = $3 RETURNING amurbooking_bot_accounts.auth_token
+base.py:1236 #INFO     [2025-11-13 11:08:18,907] - gino.engine._SAEngine - 0| ('Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhY3Rpdml0aWVzLXNlY3VyZS1hcGkiLCJhdWQiOiJhY3Rpdml0aWVzLXNlY3VyZS1hcHAiLCJzdWIiOiIzNTVmZGZhZC1iN ... (9 characters truncated) ... ctOTgxNy0xNzRiYWY2ZDkzNGYiLCJleHAiOjE3NjMxMTEyOTYsInJvbCI6W119.hL02lF8fyKZpdF1ht9_lPCyAotBJEUohjGWBV04CZOEcKBEC6eSF_fKHFEHmnOhnvQlzg1ThAqJ8vjJ7i3L6xg', 1, '+79638042595')
+base.py:769 #INFO     [2025-11-13 11:08:18,907] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:18,910] - gino.engine._SAEngine - 0| Col ('auth_token',)
+result.py:1260 #DEBUG    [2025-11-13 11:08:18,910] - gino.engine._SAEngine - 0| Row ('Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhY3Rpdml0aWVzLXNlY3VyZS1hcGkiLCJhdWQiOiJhY3Rpdml0aWVzLXNlY3VyZS1hcHAiLCJzdWIiOiIzNTVmZGZhZC1iN ... (9 characters truncated) ... ctOTgxNy0xNzRiYWY2ZDkzNGYiLCJleHAiOjE3NjMxMTEyOTYsInJvbCI6W119.hL02lF8fyKZpdF1ht9_lPCyAotBJEUohjGWBV04CZOEcKBEC6eSF_fKHFEHmnOhnvQlzg1ThAqJ8vjJ7i3L6xg',)
+browser_processing.py:397 #INFO     [2025-11-13 11:08:18,911] - root - 0| Успешно вошел в аккаунт №1!
+base_events.py:1758 #ERROR    [2025-11-13 11:08:19,144] - asyncio - 0| Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000022C4E6E3460>
+base_events.py:1758 #ERROR    [2025-11-13 11:08:19,145] - asyncio - 0| Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000022C4E756440>, 689674.203)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000022C4E6E01F0>
+base.py:1234 #INFO     [2025-11-13 11:08:19,146] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_accounts.id, amurbooking_bot_accounts.phone, amurbooking_bot_accounts.password, amurbooking_bot_accounts.proxy, amurbooking_bot_accounts.auth_token, amurbooking_bot_accounts.is_work, amurbooking_bot_accounts.created_at, amurbooking_bot_accounts.updated_at 
+FROM amurbooking_bot_accounts 
+WHERE amurbooking_bot_accounts.id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:19,146] - gino.engine._SAEngine - 0| (1,)
+result.py:809 #DEBUG    [2025-11-13 11:08:19,146] - gino.engine._SAEngine - 0| Col ('id', 'phone', 'password', 'proxy', 'auth_token', 'is_work', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:19,147] - gino.engine._SAEngine - 0| Row (1, '+79638042595', 'VovanR797$', '31.59.236.40:59100:valetinles:f5bay87SBb', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhY3Rpdml0aWVzLXNlY3VyZS1hcGkiLCJhdWQiOiJhY3Rpdml0aWVzLXNlY3VyZS1hcHAiLCJzdWIiOiIzNTVmZGZhZC1iN ... (9 characters truncated) ... ctOTgxNy0xNzRiYWY2ZDkzNGYiLCJleHAiOjE3NjMxMTEyOTYsInJvbCI6W119.hL02lF8fyKZpdF1ht9_lPCyAotBJEUohjGWBV04CZOEcKBEC6eSF_fKHFEHmnOhnvQlzg1ThAqJ8vjJ7i3L6xg', None, datetime.datetime(2025, 11, 13, 9, 7, 48, 991985, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 18, 908050, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:08:19,148] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:19,148] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:08:19,149] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:19,149] - gino.engine._SAEngine - 0| Row (23, 1643710214, 599, datetime.datetime(2025, 11, 13, 9, 8, 17, 75224, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 17, 75224, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:08:19,279] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:19,279] - gino.engine._SAEngine - 0| (23,)
+base.py:769 #INFO     [2025-11-13 11:08:19,279] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:19,282] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:08:19,365] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:08:19,365] - gino.engine._SAEngine - 0| (1643710214, 600)
+base.py:769 #INFO     [2025-11-13 11:08:19,365] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:19,367] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:19,367] - gino.engine._SAEngine - 0| Row (24, 1643710214, 600, datetime.datetime(2025, 11, 13, 9, 8, 19, 366547, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 19, 366547, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:08:19,368] - aiogram.event - 0| Update id=465957494 is handled. Duration 1265 ms by bot id=8065319444
+bookings.py:350 #INFO     [2025-11-13 11:08:20,688] - root - 0| Handler called. select_truck. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:08:20,689] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:20,689] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:08:20,689] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:20,690] - gino.engine._SAEngine - 0| Row (24, 1643710214, 600, datetime.datetime(2025, 11, 13, 9, 8, 19, 366547, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 19, 366547, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:08:20,817] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:20,817] - gino.engine._SAEngine - 0| (24,)
+base.py:769 #INFO     [2025-11-13 11:08:20,817] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:20,820] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:08:20,920] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:08:20,920] - gino.engine._SAEngine - 0| (1643710214, 601)
+base.py:769 #INFO     [2025-11-13 11:08:20,920] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:20,922] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:20,922] - gino.engine._SAEngine - 0| Row (25, 1643710214, 601, datetime.datetime(2025, 11, 13, 9, 8, 20, 921577, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 20, 921577, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:08:20,923] - aiogram.event - 0| Update id=465957495 is handled. Duration 297 ms by bot id=8065319444
+bookings.py:385 #INFO     [2025-11-13 11:08:24,247] - root - 0| Handler called. select_good_character. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:08:24,249] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:24,249] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:08:24,250] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:24,250] - gino.engine._SAEngine - 0| Row (25, 1643710214, 601, datetime.datetime(2025, 11, 13, 9, 8, 20, 921577, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 20, 921577, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:08:24,318] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:24,318] - gino.engine._SAEngine - 0| (25,)
+base.py:769 #INFO     [2025-11-13 11:08:24,318] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:24,320] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:08:24,415] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:08:24,415] - gino.engine._SAEngine - 0| (1643710214, 602)
+base.py:769 #INFO     [2025-11-13 11:08:24,416] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:24,418] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:24,418] - gino.engine._SAEngine - 0| Row (26, 1643710214, 602, datetime.datetime(2025, 11, 13, 9, 8, 24, 417278, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 24, 417278, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:08:24,418] - aiogram.event - 0| Update id=465957496 is handled. Duration 265 ms by bot id=8065319444
+bookings.py:412 #INFO     [2025-11-13 11:08:25,580] - root - 0| Handler called. select_date. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:08:25,584] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:25,584] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:08:25,585] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:25,585] - gino.engine._SAEngine - 0| Row (26, 1643710214, 602, datetime.datetime(2025, 11, 13, 9, 8, 24, 417278, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 24, 417278, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:08:25,650] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:25,650] - gino.engine._SAEngine - 0| (26,)
+base.py:769 #INFO     [2025-11-13 11:08:25,651] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:25,653] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:08:25,755] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:08:25,755] - gino.engine._SAEngine - 0| (1643710214, 603)
+base.py:769 #INFO     [2025-11-13 11:08:25,756] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:25,758] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:25,758] - gino.engine._SAEngine - 0| Row (27, 1643710214, 603, datetime.datetime(2025, 11, 13, 9, 8, 25, 756812, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 25, 756812, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:08:25,759] - aiogram.event - 0| Update id=465957497 is handled. Duration 266 ms by bot id=8065319444
+bookings.py:467 #INFO     [2025-11-13 11:08:52,202] - root - 0| Handler called. select_time. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:08:52,267] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:52,267] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:08:52,268] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:52,268] - gino.engine._SAEngine - 0| Row (27, 1643710214, 603, datetime.datetime(2025, 11, 13, 9, 8, 25, 756812, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 25, 756812, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:08:52,328] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:52,328] - gino.engine._SAEngine - 0| (27,)
+base.py:769 #INFO     [2025-11-13 11:08:52,328] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:52,330] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:08:52,418] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:08:52,418] - gino.engine._SAEngine - 0| (1643710214, 604)
+base.py:769 #INFO     [2025-11-13 11:08:52,418] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:52,420] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:52,420] - gino.engine._SAEngine - 0| Row (28, 1643710214, 604, datetime.datetime(2025, 11, 13, 9, 8, 52, 419595, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 52, 419595, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:08:52,421] - aiogram.event - 0| Update id=465957498 is handled. Duration 217 ms by bot id=8065319444
+bookings.py:562 #INFO     [2025-11-13 11:08:57,624] - root - 0| Handler called. add_booking_confirm. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:08:57,625] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_bookings (status, account_id, truck, good_character, book_date, time_duration, updated_at) VALUES ($1, $2, $3, $4, $5, $6, now()) RETURNING amurbooking_bot_bookings.id, amurbooking_bot_bookings.status, amurbooking_bot_bookings.account_id, amurbooking_bot_bookings.truck, amurbooking_bot_bookings.good_character, amurbooking_bot_bookings.book_date, amurbooking_bot_bookings.time_duration, amurbooking_bot_bookings.created_at, amurbooking_bot_bookings.updated_at
+base.py:1236 #INFO     [2025-11-13 11:08:57,625] - gino.engine._SAEngine - 0| (0, 1, 'IVECO STRALIS / K897YM28', 1, datetime.datetime(2025, 11, 21, 12, 5), 575)
+base.py:769 #INFO     [2025-11-13 11:08:57,625] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:57,627] - gino.engine._SAEngine - 0| Col ('id', 'status', 'account_id', 'truck', 'good_character', 'book_date', 'time_duration', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:57,627] - gino.engine._SAEngine - 0| Row (1, 0, 1, 'IVECO STRALIS / K897YM28', 1, datetime.datetime(2025, 11, 21, 12, 5), 575, datetime.datetime(2025, 11, 13, 9, 8, 57, 626537, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 57, 626537, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:08:57,629] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at 
+FROM amurbooking_bot_messages 
+WHERE amurbooking_bot_messages.tg_user_id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:57,629] - gino.engine._SAEngine - 0| (1643710214,)
+result.py:809 #DEBUG    [2025-11-13 11:08:57,630] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:57,630] - gino.engine._SAEngine - 0| Row (28, 1643710214, 604, datetime.datetime(2025, 11, 13, 9, 8, 52, 419595, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 52, 419595, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:08:57,735] - gino.engine._SAEngine - 0| DELETE FROM amurbooking_bot_messages WHERE amurbooking_bot_messages.id = $1
+base.py:1236 #INFO     [2025-11-13 11:08:57,735] - gino.engine._SAEngine - 0| (28,)
+base.py:769 #INFO     [2025-11-13 11:08:57,735] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:57,737] - gino.engine._SAEngine - 0| Col ()
+base.py:1234 #INFO     [2025-11-13 11:08:57,818] - gino.engine._SAEngine - 0| INSERT INTO amurbooking_bot_messages (tg_user_id, telegram_id, updated_at) VALUES ($1, $2, now()) RETURNING amurbooking_bot_messages.id, amurbooking_bot_messages.tg_user_id, amurbooking_bot_messages.telegram_id, amurbooking_bot_messages.created_at, amurbooking_bot_messages.updated_at
+base.py:1236 #INFO     [2025-11-13 11:08:57,818] - gino.engine._SAEngine - 0| (1643710214, 605)
+base.py:769 #INFO     [2025-11-13 11:08:57,818] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:08:57,820] - gino.engine._SAEngine - 0| Col ('id', 'tg_user_id', 'telegram_id', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:08:57,820] - gino.engine._SAEngine - 0| Row (29, 1643710214, 605, datetime.datetime(2025, 11, 13, 9, 8, 57, 819216, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 57, 819216, tzinfo=datetime.timezone.utc))
+dispatcher.py:172 #INFO     [2025-11-13 11:08:57,821] - aiogram.event - 0| Update id=465957499 is handled. Duration 265 ms by bot id=8065319444
+bookings.py:85 #INFO     [2025-11-13 11:14:10,491] - root - 0| Handler called. turn_on. user_id=1643710214
+base.py:1234 #INFO     [2025-11-13 11:14:10,549] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_bookings.id, amurbooking_bot_bookings.status, amurbooking_bot_bookings.account_id, amurbooking_bot_bookings.truck, amurbooking_bot_bookings.good_character, amurbooking_bot_bookings.book_date, amurbooking_bot_bookings.time_duration, amurbooking_bot_bookings.created_at, amurbooking_bot_bookings.updated_at 
+FROM amurbooking_bot_bookings 
+WHERE amurbooking_bot_bookings.id = $1
+base.py:1236 #INFO     [2025-11-13 11:14:10,549] - gino.engine._SAEngine - 0| (1,)
+result.py:809 #DEBUG    [2025-11-13 11:14:10,552] - gino.engine._SAEngine - 0| Col ('id', 'status', 'account_id', 'truck', 'good_character', 'book_date', 'time_duration', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:14:10,552] - gino.engine._SAEngine - 0| Row (1, 0, 1, 'IVECO STRALIS / K897YM28', 1, datetime.datetime(2025, 11, 21, 12, 5), 575, datetime.datetime(2025, 11, 13, 9, 8, 57, 626537, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 57, 626537, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:14:10,553] - gino.engine._SAEngine - 0| SELECT count(*) AS count_1 
+FROM (SELECT amurbooking_bot_bookings.id AS id, amurbooking_bot_bookings.status AS status, amurbooking_bot_bookings.account_id AS account_id, amurbooking_bot_bookings.truck AS truck, amurbooking_bot_bookings.good_character AS good_character, amurbooking_bot_bookings.book_date AS book_date, amurbooking_bot_bookings.time_duration AS time_duration, amurbooking_bot_bookings.created_at AS created_at, amurbooking_bot_bookings.updated_at AS updated_at 
+FROM amurbooking_bot_bookings 
+WHERE amurbooking_bot_bookings.status = $1 AND amurbooking_bot_bookings.account_id = $2) AS subq
+base.py:1236 #INFO     [2025-11-13 11:14:10,553] - gino.engine._SAEngine - 0| (1, 1)
+result.py:809 #DEBUG    [2025-11-13 11:14:10,555] - gino.engine._SAEngine - 0| Col ('count_1',)
+result.py:1260 #DEBUG    [2025-11-13 11:14:10,555] - gino.engine._SAEngine - 0| Row (0,)
+base.py:1234 #INFO     [2025-11-13 11:14:10,556] - gino.engine._SAEngine - 0| SELECT amurbooking_bot_bookings.id, amurbooking_bot_bookings.status, amurbooking_bot_bookings.account_id, amurbooking_bot_bookings.truck, amurbooking_bot_bookings.good_character, amurbooking_bot_bookings.book_date, amurbooking_bot_bookings.time_duration, amurbooking_bot_bookings.created_at, amurbooking_bot_bookings.updated_at 
+FROM amurbooking_bot_bookings 
+WHERE amurbooking_bot_bookings.id = $1
+base.py:1236 #INFO     [2025-11-13 11:14:10,556] - gino.engine._SAEngine - 0| (1,)
+result.py:809 #DEBUG    [2025-11-13 11:14:10,557] - gino.engine._SAEngine - 0| Col ('id', 'status', 'account_id', 'truck', 'good_character', 'book_date', 'time_duration', 'created_at', 'updated_at')
+result.py:1260 #DEBUG    [2025-11-13 11:14:10,557] - gino.engine._SAEngine - 0| Row (1, 0, 1, 'IVECO STRALIS / K897YM28', 1, datetime.datetime(2025, 11, 21, 12, 5), 575, datetime.datetime(2025, 11, 13, 9, 8, 57, 626537, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 11, 13, 9, 8, 57, 626537, tzinfo=datetime.timezone.utc))
+base.py:1234 #INFO     [2025-11-13 11:14:10,558] - gino.engine._SAEngine - 0| UPDATE amurbooking_bot_bookings SET status=$1, updated_at=now() WHERE amurbooking_bot_bookings.id = $2 RETURNING amurbooking_bot_bookings.status
+base.py:1236 #INFO     [2025-11-13 11:14:10,559] - gino.engine._SAEngine - 0| (1, 1)
+base.py:769 #INFO     [2025-11-13 11:14:10,559] - gino.engine._SAEngine - 0| COMMIT
+result.py:809 #DEBUG    [2025-11-13 11:14:10,560] - gino.engine._SAEngine - 0| Col ('status',)
+result.py:1260 #DEBUG    [2025-11-13 11:14:10,560] - gino.engine._SAEngine - 0| Row (1,)
+dispatcher.py:172 #INFO     [2025-11-13 11:14:10,744] - aiogram.event - 0| Update id=465957500 is handled. Duration 327 ms by bot id=8065319444
+dispatcher.py:395 #INFO     [2025-11-13 11:14:55,448] - aiogram.dispatcher - 0| Polling stopped for bot @amurbooking_test_bot id=8065319444 - 'amurbooking-bot'
+dispatcher.py:594 #INFO     [2025-11-13 11:14:55,448] - aiogram.dispatcher - 0| Polling stopped

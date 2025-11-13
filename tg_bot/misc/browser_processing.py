@@ -328,8 +328,6 @@ class BrowserProcessing:
         headers["authorization"] = self.ACCOUNT_AUTH_TOKEN
         date = self.BOOKING_OBJ.book_date.strftime("%Y-%m-%d")
 
-        print(f"date = {date}")
-
         async with self.AIOHTTP_SESSION.get(
                 url=f"https://amurbooking.com/oktet/api/v1/booking/time-slots?date={date}",
                 headers=headers,
@@ -338,7 +336,6 @@ class BrowserProcessing:
                         if self.ACCOUNT_PROXY.username else None,
                 timeout=20
         ) as response:
-            print(await response.text())
             if response.status == 200:
                 return json.loads(await response.text())
 
