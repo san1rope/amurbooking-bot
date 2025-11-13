@@ -461,6 +461,7 @@ async def select_date(callback: types.CallbackQuery, state: FSMContext, back: bo
         markup=await Im.markup_from_buttons([
             [Im.select_first_half_day_btn],
             [Im.select_second_half_day_btn],
+            [Im.select_all_day],
             [await Im.get_back_btn(callback_data="back_to_good_character")]
         ])
     )

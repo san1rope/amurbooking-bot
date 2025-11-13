@@ -23,6 +23,8 @@ class InlineMarkups:
         text="9:00 - 12:00", callback_data=CustomCallback(role="select_time", data="9-00_180").pack())
     select_second_half_day_btn = InlineKeyboardButton(
         text="12:05 - 21:40", callback_data=CustomCallback(role="select_time", data="12-05_575").pack())
+    select_all_day = InlineKeyboardButton(
+        text="Весь день", callback_data=CustomCallback(role="select_time", data="9-00_780").pack())
 
     @staticmethod
     async def calendar(date_time: datetime) -> InlineKeyboardMarkup:

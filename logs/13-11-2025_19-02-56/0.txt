@@ -1,0 +1,7 @@
+db_gino.py:41 #INFO     [2025-11-13 19:02:56,404] - tg_bot.db_models.db_gino - 0| Connecting to PostgreSQL...
+browser_processing.py:459 #INFO     [2025-11-13 19:02:57,022] - root - 0| Чекер сообщений запущен! Процесс обработки записи №
+browser_processing.py:421 #INFO     [2025-11-13 19:02:57,737] - root - 0| Пробую получить новый браузер...
+browser_processing.py:432 #INFO     [2025-11-13 19:03:04,423] - root - 0| Запустил новый экземпляр playwright_obj
+browser_processing.py:443 #INFO     [2025-11-13 19:03:05,798] - root - 0| Запустил новый браузер
+browser_processing.py:451 #INFO     [2025-11-13 19:03:05,853] - root - 0| Запустил новый контекст браузера
+browser_processing.py:454 #INFO     [2025-11-13 19:03:06,021] - root - 0| Открыл рабочую вкладку

@@ -1,6 +1,8 @@
 import asyncio
 import base64
 import json
+import time
+import traceback
 from asyncio import CancelledError, Future
 from copy import deepcopy
 from multiprocessing.queues import Queue
@@ -83,9 +85,6 @@ class BrowserProcessing:
             loop = asyncio.get_event_loop()
             self.ASYNCIO_TASK = loop.create_task(self.processing_booking())
             return await self.queue_messages_checker()
-
-        elif self.WORK_TYPE == "test":
-            return await self.auth()
 
         else:
             return None
@@ -269,8 +268,23 @@ class BrowserProcessing:
                 except Exception:
                     break
 
+            print("wait 1542")
+            button_locator = self.PL_PAGE.locator(".form-footer .btn-primary")
+            await button_locator.click(timeout=0)
+
+            print("ПОЙМАЛ")
+            await self.PL_PAGE.screenshot(path="temp124.png")
+
+            for uid in Config.ADMINS:
+                try:
+                    await Config.BOT.send_message(chat_id=uid, text="ПОЙМАЛ")
+
+                except Exception:
+                    print(f"не смог отправить сообщение {uid}")
+
             print("sleep")
-            await asyncio.sleep(1000)
+            while True:
+                time.sleep(1000)
 
         except CancelledError:
             if self.PL_BROWSER:
@@ -284,6 +298,13 @@ class BrowserProcessing:
 
             self.FLAG_CANCEL_COMPLETE = True
             Config.logger.info("Успешно завершил задачу!")
+
+        except Exception:
+            print(traceback.format_exc())
+
+            print("sleep")
+            while True:
+                time.sleep(1000)
 
     async def send_log_to_tg(self, log_text: str):
         for uid in Config.ADMINS:
@@ -360,6 +381,7 @@ class BrowserProcessing:
         ) as response:
             if response.status == 200:
                 answer = json.loads(await response.text())
+                await self.AIOHTTP_SESSION.close()
                 return [f"{car_data['model']} / {car_data['registrationPlate']}" for car_data in answer["content"]]
 
             elif response.status == 401:
@@ -380,6 +402,7 @@ class BrowserProcessing:
                 f"Попытки для получения данных о грузовиках закончились!"
                 f"\nкод={response.status}\nответ: {await response.text()}"
             )
+            await self.AIOHTTP_SESSION.close()
             return False
 
     async def auth(self, retries: int = 3) -> bool:
