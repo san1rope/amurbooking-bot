@@ -1,0 +1,11 @@
+db_gino.py:41 #INFO     [2025-11-19 00:48:36,480] - tg_bot.db_models.db_gino - 0| Connecting to PostgreSQL...
+browser_processing.py:536 #INFO     [2025-11-19 00:48:37,021] - root - 0| Чекер сообщений запущен! Процесс обработки записи №
+browser_processing.py:367 #INFO     [2025-11-19 00:48:37,693] - root - 0| Получил данные о времени!
+browser_processing.py:497 #INFO     [2025-11-19 00:48:37,693] - root - 0| Пробую получить новый браузер...
+browser_processing.py:505 #INFO     [2025-11-19 00:48:38,162] - root - 0| Запустил новый экземпляр playwright_obj
+browser_processing.py:513 #INFO     [2025-11-19 00:48:38,343] - root - 0| Запустил новый браузер
+browser_processing.py:521 #INFO     [2025-11-19 00:48:38,357] - root - 0| Запустил новый контекст браузера
+browser_processing.py:524 #INFO     [2025-11-19 00:48:38,519] - root - 0| Открыл рабочую вкладку
+browser_processing.py:117 #INFO     [2025-11-19 00:48:46,044] - root - 0| Запрос
+browser_processing.py:367 #INFO     [2025-11-19 00:48:47,202] - root - 0| Получил данные о времени!
+utils.py:141 #INFO     [2025-11-19 00:48:57,990] - root - 0| Keyboard interrupt: wrapper

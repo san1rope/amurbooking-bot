@@ -137,10 +137,12 @@ async def delete_account_confirm(callback: types.CallbackQuery, callback_data: C
 @router.message(Command("add_account"))
 @router.callback_query(F.data == "add_account")
 @router.callback_query(F.data == "back_to_add_account_phone")
-async def add_account(callback: types.CallbackQuery, state: FSMContext):
-    await callback.answer()
-    uid = callback.from_user.id
+async def add_account(message: Union[types.Message, types.CallbackQuery], state: FSMContext):
+    uid = message.from_user.id
     Config.logger.info(f"Handler called. {add_account.__name__}. user_id={uid}")
+
+    if isinstance(message, types.CallbackQuery):
+        await message.answer()
 
     text = [
         "<b>➕ Добавление аккаунта</b>",

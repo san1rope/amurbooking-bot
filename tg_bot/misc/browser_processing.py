@@ -7,17 +7,18 @@ from asyncio import CancelledError, Future
 from copy import deepcopy
 from multiprocessing.queues import Queue
 from random import uniform
-from typing import Optional
+from typing import Optional, List, Union
 from datetime import datetime, timedelta
 
 from aiohttp import ClientSession, BasicAuth
 from playwright.async_api import Page, Browser, async_playwright
+from pydantic import ValidationError
 
 from config import Config
 from tg_bot.db_models.db_gino import connect_to_db
 from tg_bot.db_models.quick_commands import DbAccount, DbBooking
 from tg_bot.db_models.schemas import Booking
-from tg_bot.misc.models import ProxyData, WorkTypes
+from tg_bot.misc.models import ProxyData, WorkTypes, BookingSlot
 from tg_bot.misc.utils import Utils as Ut
 
 
@@ -89,6 +90,45 @@ class BrowserProcessing:
         else:
             return None
 
+    async def add_auth_token_to_local_storage(self, retries: int = 3) -> bool:
+        try:
+            await self.PL_PAGE.goto("https://amurbooking.com/")
+            await self.PL_PAGE.evaluate(
+                "({ key, value }) => localStorage.setItem(key, value)",
+                {"key": "oktet-auth-token", "value": self.ACCOUNT_AUTH_TOKEN}
+            )
+            await asyncio.sleep(uniform(1, 2))
+
+            return True
+
+        except Exception as ex:
+            Config.logger.error(f"Не удалось добавить токен в local storage! Попыток: {retries}\nex: {ex}")
+
+            if retries:
+                return await self.add_auth_token_to_local_storage(retries=retries - 1)
+
+            return False
+
+    async def find_free_book_time(self) -> str:
+        start_tr = self.BOOKING_OBJ.book_date
+        end_tr = self.BOOKING_OBJ.book_date + timedelta(minutes=self.BOOKING_OBJ.time_duration)
+
+        while True:
+            Config.logger.info("Запрос")
+            await asyncio.sleep(uniform(0.300, 0.500))
+            result = await self.get_booking_data_per_day()
+            if not result:
+                continue
+
+            for slot_info in result:
+                try:
+                    if slot_info.availableToBook and start_tr <= slot_info.dateBooked <= end_tr:
+                        selected_time_text = slot_info.dateBooked.strftime("%H:%M")
+                        return selected_time_text
+
+                except Exception as ex:
+                    Config.logger.warning(f"Не удалось сравнить даты! ex: {ex}")
+
     async def processing_booking(self):
         try:
             db_booking = await DbBooking(status=1, account_id=self.ACCOUNT_ID).select()
@@ -100,18 +140,21 @@ class BrowserProcessing:
             self.BOOKING_OBJ = db_booking
 
             result = await self.get_booking_data_per_day()
-            if (not result) or ("availableToBook" not in result[0]):
-                return Config.logger.error(f"Не удалось получить данные о времени!\nОтвет: {result}")
+            if not result:
+                Config.logger.error(f"Не удалось получить данные о времени!\nОтвет: {result}")
+                raise CancelledError()
 
-            await self.get_new_browser_obj()
-            await self.PL_PAGE.goto("https://amurbooking.com/")
-            await self.PL_PAGE.evaluate(
-                "({ key, value }) => localStorage.setItem(key, value)",
-                {"key": "oktet-auth-token", "value": self.ACCOUNT_AUTH_TOKEN}
-            )
-            await asyncio.sleep(uniform(1, 2))
+            result = await self.get_new_browser_obj()
+            if not result:
+                Config.logger.error("Не удалось запустить браузер! Завершаю работу...")
+                raise CancelledError()
+
+            result = await self.add_auth_token_to_local_storage()
+            if not result:
+                Config.logger.error("Не удалось добавить токен в local_storage! Завершаю работу...")
+                raise CancelledError()
+
             await self.PL_PAGE.goto("https://amurbooking.com/booking")
-
             await self.PL_PAGE.wait_for_selector(".btn-lg", timeout=30000)
             await self.PL_PAGE.locator(".btn-lg").first.click(timeout=10000)
             await self.PL_PAGE.locator(".datepicker-input").wait_for(state="attached", timeout=30000)
@@ -128,26 +171,7 @@ class BrowserProcessing:
 
             await self.PL_PAGE.locator(".datepicker-input").click()
 
-            start_tr = self.BOOKING_OBJ.book_date  # start time range
-            end_tr = self.BOOKING_OBJ.book_date + timedelta(minutes=self.BOOKING_OBJ.time_duration)  # end time range
-            selected_time_text = ""
-            while True:
-                print("request")
-                await asyncio.sleep(uniform(0.300, 0.500))
-                result = await self.get_booking_data_per_day()
-                if not result:
-                    continue
-
-                flag = False
-                for time_info in result:
-                    time_info_dt = datetime.strptime(time_info['dateBooked'], "%Y-%m-%dT%H:%M:%S")
-                    if time_info["availableToBook"] and start_tr <= time_info_dt <= end_tr:
-                        selected_time_text = time_info_dt.strftime("%H:%M")
-                        flag = True
-                        break
-
-                if flag:
-                    break
+            selected_time_text = await self.find_free_book_time()
 
             await self.PL_PAGE.locator(".datepicker-input").fill(self.BOOKING_OBJ.book_date.strftime("%d.%m.%Y"))
             await self.PL_PAGE.locator(".form-control--time").click()
@@ -168,15 +192,12 @@ class BrowserProcessing:
             sbb = await slider.bounding_box()
             tbb = await track.bounding_box()
 
-            print(f"sbb = {sbb}")
-            print(f"tbb = {tbb}")
-
             sx = sbb["x"] + sbb["width"] / 2
             sy = sbb["y"] + sbb["height"] / 2
             tx = tbb["x"] + tbb["width"] - 2
             ty = sy
 
-            await asyncio.sleep(1)
+            await asyncio.sleep(uniform(1, 1.1))
 
             await self.PL_PAGE.mouse.move(sx, sy)
             await self.PL_PAGE.mouse.down()
@@ -268,43 +289,43 @@ class BrowserProcessing:
                 except Exception:
                     break
 
-            print("wait 1542")
+            print("готовлюсь тыкать по отправить!")
             button_locator = self.PL_PAGE.locator(".form-footer .btn-primary")
-            await button_locator.click(timeout=0)
+            print("скроллю!")
+            await button_locator.scroll_into_view_if_needed(timeout=10_000)
+            await button_locator.wait_for(state="visible", timeout=30000)
+            print("дождался!")
+            await asyncio.sleep(uniform(0.2, 0.25))
+            await button_locator.click(timeout=5_000)
+            print("кликнул!")
 
-            print("ПОЙМАЛ")
-            await self.PL_PAGE.screenshot(path="temp124.png")
+            print("ПОЙМАЛ ")
+            # await self.PL_PAGE.screenshot(path="temp124.png")
 
             for uid in Config.ADMINS:
                 try:
-                    await Config.BOT.send_message(chat_id=uid, text="ПОЙМАЛ")
+                    await Config.BOT.send_message(chat_id=uid, text=f"ПОЙМАЛ booking = {db_booking.id}")
 
                 except Exception:
                     print(f"не смог отправить сообщение {uid}")
 
-            print("sleep")
-            while True:
-                time.sleep(1000)
+            await DbBooking(db_id=db_booking.id).update(status=2)
+            raise CancelledError()
 
         except CancelledError:
-            if self.PL_BROWSER:
-                await self.PL_BROWSER.close()
-
-            if self.PL_OBJ:
-                await self.PL_OBJ.stop()
-
-            if self.AIOHTTP_SESSION:
-                await self.AIOHTTP_SESSION.close()
+            await self.close_session_objects()
 
             self.FLAG_CANCEL_COMPLETE = True
-            Config.logger.info("Успешно завершил задачу!")
+            Config.logger.info("Завершил задачу!")
 
-        except Exception:
-            print(traceback.format_exc())
+        except Exception as ex:
+            Config.logger.critical(traceback.format_exc())
+
+            await self.PL_PAGE.screenshot(path="temp421.png")
 
             print("sleep")
             while True:
-                time.sleep(1000)
+                await asyncio.sleep(1000)
 
     async def send_log_to_tg(self, log_text: str):
         for uid in Config.ADMINS:
@@ -317,7 +338,7 @@ class BrowserProcessing:
             except Exception as ex:
                 Config.logger.warning(f"Не удалось прислать лог в телеграм! user_id={uid}\n{ex}")
 
-    async def get_booking_data_per_day(self, retries: int = 3):
+    async def get_booking_data_per_day(self, retries: int = 3) -> Union[List[BookingSlot], bool]:
         headers = deepcopy(self.DEFAULT_HEADERS)
         headers["referer"] = "https://amurbooking.com/booking"
 
@@ -337,7 +358,16 @@ class BrowserProcessing:
                 timeout=20
         ) as response:
             if response.status == 200:
-                return json.loads(await response.text())
+                answer = json.loads(await response.text())
+
+                try:
+                    validated_slots: List[BookingSlot] = [BookingSlot.model_validate(item) for item in answer]
+
+                    Config.logger.info("Получил данные о времени!")
+                    return validated_slots
+
+                except ValidationError as ex:
+                    Config.logger.error(f"Ответ с данных о времени не прошел валидацию! ex: {ex}")
 
             elif response.status == 401:
                 Config.logger.error(f"Не удалось получить данные о времени! Пробую пройти авторизацию...\n")
@@ -438,43 +468,68 @@ class BrowserProcessing:
             Config.logger.error("Попытки для входа в аккаунт закончились!")
             return False
 
-    async def get_new_browser_obj(self) -> bool:
-        Config.logger.info("Пробую получить новый браузер...")
-
+    async def close_session_objects(self):
         if self.PL_BROWSER is not None:
-            await self.PL_BROWSER.close()
-            Config.logger.info("Закрыл старый браузер")
+            try:
+                await self.PL_BROWSER.close()
+                Config.logger.info("Закрыл старый браузер")
+
+            except Exception as ex:
+                Config.logger.warning(f"Не удалось закрыть PL_BROWSER. ex: {ex}")
 
         if self.PL_OBJ is not None:
-            await self.PL_OBJ.stop()
-            Config.logger.info("Остановил старый playwright_obj")
+            try:
+                await self.PL_OBJ.stop()
+                Config.logger.info("Остановил старый playwright_obj")
 
-        self.PL_OBJ = await async_playwright().start()
-        Config.logger.info("Запустил новый экземпляр playwright_obj")
+            except Exception as ex:
+                Config.logger.warning(f"Не удалось остановить PL_OBJ. ex: {ex}")
 
-        # if self.PROXY is None:
-        #     await self.get_new_proxy()
+        if self.AIOHTTP_SESSION:
+            try:
+                await self.AIOHTTP_SESSION.close()
 
-        proxy_arg = {"server": f"http://{self.ACCOUNT_PROXY.host}:{self.ACCOUNT_PROXY.port}"}
-        if self.ACCOUNT_PROXY.username and self.ACCOUNT_PROXY.password:
-            proxy_arg["username"] = self.ACCOUNT_PROXY.username
-            proxy_arg["password"] = self.ACCOUNT_PROXY.password
+            except Exception as ex:
+                Config.logger.warning(f"Ошибка при закрытии AIOHTTP сессии! ex: {ex}")
 
-        self.PL_BROWSER = await self.PL_OBJ.chromium.launch(headless=bool(Config.HEADLESS), proxy=proxy_arg)
-        Config.logger.info("Запустил новый браузер")
+    async def get_new_browser_obj(self, retries: int = 3) -> bool:
+        Config.logger.info("Пробую получить новый браузер...")
 
-        self.PL_CONTEXT = await self.PL_BROWSER.new_context(
-            locale="ru",
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                       "AppleWebKit/537.36 (KHTML, like Gecko) "
-                       "Chrome/124.0.6367.207 Safari/537.36"
-        )
-        Config.logger.info("Запустил новый контекст браузера")
+        await self.close_session_objects()
 
-        self.PL_PAGE = await self.PL_CONTEXT.new_page()
-        Config.logger.info("Открыл рабочую вкладку")
+        try:
+            self.AIOHTTP_SESSION = ClientSession()
 
-        return True
+            self.PL_OBJ = await async_playwright().start()
+            Config.logger.info("Запустил новый экземпляр playwright_obj")
+
+            proxy_arg = {"server": f"http://{self.ACCOUNT_PROXY.host}:{self.ACCOUNT_PROXY.port}"}
+            if self.ACCOUNT_PROXY.username and self.ACCOUNT_PROXY.password:
+                proxy_arg["username"] = self.ACCOUNT_PROXY.username
+                proxy_arg["password"] = self.ACCOUNT_PROXY.password
+
+            self.PL_BROWSER = await self.PL_OBJ.chromium.launch(headless=bool(Config.HEADLESS), proxy=proxy_arg)
+            Config.logger.info("Запустил новый браузер")
+
+            self.PL_CONTEXT = await self.PL_BROWSER.new_context(
+                locale="ru",
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                           "AppleWebKit/537.36 (KHTML, like Gecko) "
+                           "Chrome/124.0.6367.207 Safari/537.36"
+            )
+            Config.logger.info("Запустил новый контекст браузера")
+
+            self.PL_PAGE = await self.PL_CONTEXT.new_page()
+            Config.logger.info("Открыл рабочую вкладку")
+
+            return True
+
+        except Exception as ex:
+            Config.logger.error(f"Не удалось получить новый браузер! Попыток: {retries}\nex: {ex}")
+            if retries:
+                return await self.get_new_browser_obj(retries=retries - 1)
+
+            return False
 
     async def queue_messages_checker(self):
         Config.logger.info(f"Чекер сообщений запущен! Процесс обработки записи №")

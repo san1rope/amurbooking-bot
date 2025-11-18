@@ -1,6 +1,12 @@
 from typing import Optional, Any
+from datetime import datetime
 
 from pydantic import BaseModel
+
+
+class BookingSlot(BaseModel):
+    dateBooked: datetime
+    availableToBook: bool
 
 
 class WorkTypes:
