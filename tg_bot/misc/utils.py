@@ -89,6 +89,9 @@ class Utils:
         log_filepath.touch(exist_ok=True)
 
         logger = logging.getLogger()
+        if logger.handlers:
+            logger.handlers.clear()
+
         logger.setLevel(logging.INFO)
         logging.getLogger("aiogram.event").setLevel(logging.WARNING)
         logging.getLogger("gino").setLevel(logging.WARNING)
