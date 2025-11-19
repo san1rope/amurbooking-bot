@@ -1,5 +1,6 @@
 .venv
 .idea/*
 .env
-__pycache__
-logs/
+__pycache__/
+logs/*
+!logs/.gitkeep

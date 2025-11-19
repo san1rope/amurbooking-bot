@@ -317,7 +317,7 @@ class BrowserProcessing:
             self.FLAG_CANCEL_COMPLETE = True
             Config.logger.info("Завершил задачу!")
 
-        except Exception as ex:
+        except Exception:
             Config.logger.critical(traceback.format_exc())
 
             await self.PL_PAGE.screenshot(path="temp421.png")
