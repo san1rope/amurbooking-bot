@@ -114,8 +114,7 @@ class BrowserProcessing:
         end_tr = self.BOOKING_OBJ.book_date + timedelta(minutes=self.BOOKING_OBJ.time_duration)
 
         while True:
-            Config.logger.info("Запрос")
-            await asyncio.sleep(uniform(0.300, 0.500))
+            await asyncio.sleep(uniform(0.500, 0.700))
             result = await self.get_booking_data_per_day()
             if not result:
                 continue
@@ -349,45 +348,56 @@ class BrowserProcessing:
         headers["authorization"] = self.ACCOUNT_AUTH_TOKEN
         date = self.BOOKING_OBJ.book_date.strftime("%Y-%m-%d")
 
-        async with self.AIOHTTP_SESSION.get(
-                url=f"https://amurbooking.com/oktet/api/v1/booking/time-slots?date={date}",
-                headers=headers,
-                proxy=f"http://{self.ACCOUNT_PROXY.host}:{self.ACCOUNT_PROXY.port}",
-                proxy_auth=BasicAuth(login=self.ACCOUNT_PROXY.username, password=self.ACCOUNT_PROXY.password) \
-                        if self.ACCOUNT_PROXY.username else None,
-                timeout=20
-        ) as response:
-            if response.status == 200:
-                answer = json.loads(await response.text())
+        try:
+            async with self.AIOHTTP_SESSION.get(
+                    url=f"https://amurbooking.com/oktet/api/v1/booking/time-slots?date={date}",
+                    headers=headers,
+                    proxy=f"http://{self.ACCOUNT_PROXY.host}:{self.ACCOUNT_PROXY.port}",
+                    proxy_auth=BasicAuth(login=self.ACCOUNT_PROXY.username, password=self.ACCOUNT_PROXY.password) \
+                            if self.ACCOUNT_PROXY.username else None,
+                    timeout=20
+            ) as response:
+                if response.status == 200:
+                    answer = json.loads(await response.text())
 
-                try:
-                    validated_slots: List[BookingSlot] = [BookingSlot.model_validate(item) for item in answer]
+                    try:
+                        validated_slots: List[BookingSlot] = [BookingSlot.model_validate(item) for item in answer]
 
-                    Config.logger.info("Получил данные о времени!")
-                    return validated_slots
+                        Config.logger.info("Получил данные о времени!")
+                        return validated_slots
 
-                except ValidationError as ex:
-                    Config.logger.error(f"Ответ с данных о времени не прошел валидацию! ex: {ex}")
+                    except ValidationError as ex:
+                        Config.logger.error(f"Ответ с данных о времени не прошел валидацию! ex: {ex}")
 
-            elif response.status == 401:
-                Config.logger.error(f"Не удалось получить данные о времени! Пробую пройти авторизацию...\n")
-                await self.auth()
+                elif response.status == 401:
+                    Config.logger.error(f"Не удалось получить данные о времени! Пробую пройти авторизацию...\n")
+                    await self.auth()
 
-            else:
+                else:
+                    Config.logger.error(
+                        f"Не удалось получить данные о временеи!"
+                        f"\nкод={response.status}\nответ: {await response.text()}"
+                    )
+
+                if retries:
+                    await asyncio.sleep(5)
+                    return await self.get_booking_data_per_day(retries=retries - 1)
+
                 Config.logger.error(
-                    f"Не удалось получить данные о временеи!"
+                    f"Попытки для получения данных о времени закончились!"
                     f"\nкод={response.status}\nответ: {await response.text()}"
                 )
+                return False
+
+        except Exception:
+            Config.logger.error(traceback.format_exc())
+            await asyncio.sleep(5)
 
             if retries:
-                await asyncio.sleep(5)
                 return await self.get_booking_data_per_day(retries=retries - 1)
 
-            Config.logger.error(
-                f"Попытки для получения данных о времени закончились!"
-                f"\nкод={response.status}\nответ: {await response.text()}"
-            )
             return False
+
 
     async def get_trucks_info(self, retries: int = 3):
         headers = deepcopy(self.DEFAULT_HEADERS)
