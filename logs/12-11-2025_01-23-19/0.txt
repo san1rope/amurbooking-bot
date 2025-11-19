@@ -1,3 +1,0 @@
-db_gino.py:41 #INFO     [2025-11-12 01:23:19,628] - tg_bot.db_models.db_gino - 0| Connecting to PostgreSQL...
-browser_processing.py:469 #INFO     [2025-11-12 01:23:20,189] - root - 0| Чекер сообщений запущен! Процесс обработки записи №
-browser_processing.py:295 #INFO     [2025-11-12 01:23:48,804] - root - 0| Успешно завершил задачу!

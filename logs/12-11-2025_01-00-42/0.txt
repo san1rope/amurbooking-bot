@@ -1,6 +1,0 @@
-db_gino.py:41 #INFO     [2025-11-12 01:00:42,923] - tg_bot.db_models.db_gino - 0| Connecting to PostgreSQL...
-browser_processing.py:429 #INFO     [2025-11-12 01:00:44,290] - root - 0| Пробую получить новый браузер...
-browser_processing.py:440 #INFO     [2025-11-12 01:00:48,411] - root - 0| Запустил новый экземпляр playwright_obj
-browser_processing.py:451 #INFO     [2025-11-12 01:00:48,786] - root - 0| Запустил новый браузер
-browser_processing.py:459 #INFO     [2025-11-12 01:00:48,821] - root - 0| Запустил новый контекст браузера
-browser_processing.py:462 #INFO     [2025-11-12 01:00:48,982] - root - 0| Открыл рабочую вкладку

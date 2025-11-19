@@ -1,7 +1,0 @@
-db_gino.py:41 #INFO     [2025-11-01 21:14:43,337] - tg_bot.db_models.db_gino - 0| Connecting to PostgreSQL...
-dispatcher.py:566 #INFO     [2025-11-01 21:14:44,141] - aiogram.dispatcher - 0| Start polling
-dispatcher.py:363 #INFO     [2025-11-01 21:14:44,181] - aiogram.dispatcher - 0| Run polling for bot @amurbooking_test_bot id=8065319444 - 'amurbooking-bot'
-start.py:16 #INFO     [2025-11-01 21:14:50,482] - tg_bot.handlers.start - 0| Handler called. cmd_start. user_id=1643710214
-dispatcher.py:172 #INFO     [2025-11-01 21:14:50,624] - aiogram.event - 0| Update id=465957052 is handled. Duration 140 ms by bot id=8065319444
-dispatcher.py:594 #INFO     [2025-11-01 21:15:04,948] - aiogram.dispatcher - 0| Polling stopped
-dispatcher.py:395 #INFO     [2025-11-01 21:15:04,948] - aiogram.dispatcher - 0| Polling stopped for bot @amurbooking_test_bot id=8065319444 - 'amurbooking-bot'
