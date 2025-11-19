@@ -114,7 +114,7 @@ class BrowserProcessing:
         end_tr = self.BOOKING_OBJ.book_date + timedelta(minutes=self.BOOKING_OBJ.time_duration)
 
         while True:
-            await asyncio.sleep(uniform(0.500, 0.700))
+            await asyncio.sleep(uniform(0.300, 0.400))
             result = await self.get_booking_data_per_day()
             if not result:
                 continue
