@@ -3,9 +3,8 @@ import os
 import logging
 from datetime import datetime
 from pathlib import Path
-from queue import Empty
 from typing import Union, Dict, Optional, List, Any
-from multiprocessing import Queue
+from multiprocessing import Process
 
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import InlineKeyboardMarkup
@@ -13,25 +12,17 @@ from aiogram.types import InlineKeyboardMarkup
 from config import Config
 from tg_bot.db_models.quick_commands import DbMessageId
 from tg_bot.db_models.schemas import MessageId
-from tg_bot.misc.models import ProxyData, QueueMessage
+from tg_bot.misc.models import ProxyData
 
-BOOKING_PROCESSES: Dict[int, Dict[str, Any]] = {}
+BOOKING_PROCESSES: Dict[int, Process] = {}
 
 
 class Utils:
     PROCESS_STR = "process"
     QUEUE_STR = "queue"
+    FOR_STATS_MONITOR = "for_start_monitor"
 
     STOP_PROCESS = "stop_process"
-
-    @staticmethod
-    async def get_message_from_queue(queue: Queue) -> Union[QueueMessage, None]:
-        try:
-            msg = queue.get_nowait()
-            return msg
-
-        except Empty:
-            return None
 
     @staticmethod
     async def send_step_message(user_id: int, text: str, markup: Optional[InlineKeyboardMarkup] = None):
@@ -110,30 +101,32 @@ class Utils:
         return logger
 
     @staticmethod
-    async def load_proxies() -> List[ProxyData]:
-        Config.PROXIES_FILEPATH.parent.mkdir(exist_ok=True, parents=True)
-        Config.PROXIES_FILEPATH.touch(exist_ok=True)
+    async def load_proxies() -> Dict[str, List[ProxyData]]:
+        out_data = {}
+        for proxy_type, proxy_filepath in Config.PROXIES_FILEPATH.items():
+            proxy_filepath.parent.mkdir(parents=True, exist_ok=True)
+            proxy_filepath.touch(exist_ok=True)
 
-        with open(Config.PROXIES_FILEPATH, "r", encoding="utf-8") as file:
-            proxies = file.read().split("\n")
-            proxies_objs = []
+            out_data[proxy_type] = []
+            with open(proxy_filepath, "r", encoding="utf-8") as file:
+                proxies = file.read().split("\n")
 
-            for proxy, proxy_id in zip(proxies, range(1, len(proxies) + 1)):
-                try:
-                    host, port, username, password = proxy.split(":")
-
-                except ValueError:
+                for proxy, proxy_id in zip(proxies, range(1, len(proxies) + 1)):
                     try:
-                        host, port = proxy.split(":")
-                        username, password = None, None
+                        host, port, username, password = proxy.split(":")
 
                     except ValueError:
-                        Config.logger.error(f"Прокси указано в неверном формате: {proxy}")
-                        continue
+                        try:
+                            host, port = proxy.split(":")
+                            username, password = None, None
 
-                proxies_objs.append(ProxyData(host=host, port=port, username=username, password=password))
+                        except ValueError:
+                            Config.logger.error(f"Прокси указано в неверном формате: {proxy}")
+                            continue
 
-        return proxies_objs
+                    out_data[proxy_type].append(ProxyData(host=host, port=port, username=username, password=password))
+
+        return out_data
 
     @staticmethod
     def wrapper(func, *args, **kwargs) -> Any:

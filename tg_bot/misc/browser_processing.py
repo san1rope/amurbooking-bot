@@ -1,13 +1,11 @@
 import asyncio
 import base64
 import json
-import time
 import traceback
 from asyncio import CancelledError, Future
 from copy import deepcopy
-from multiprocessing.queues import Queue
 from random import uniform
-from typing import Optional, List, Union
+from typing import Optional, List, Union, Dict
 from datetime import datetime, timedelta
 
 from aiohttp import ClientSession, BasicAuth
@@ -39,7 +37,8 @@ class BrowserProcessing:
         "user-agent": USER_AGENT
     }
     AIOHTTP_SESSION: Optional[ClientSession] = None
-    PROCESS_QUEUE: Optional[Queue] = None
+    SHARED_DATA = None
+    SHARED_PROXIES: Optional[List[ProxyData]] = None
     ASYNCIO_TASK: Optional[Future] = None
     FLAG_CANCEL_COMPLETE: bool = False
 
@@ -57,16 +56,19 @@ class BrowserProcessing:
     PL_CONTEXT = None
     PL_PAGE: Optional[Page] = None
 
-    def __init__(self, work_type: str, account_id: Optional[int], process_queue: Optional[Queue] = None):
+    def __init__(self, shared_data, work_type: str, account_id: Optional[int], shared_proxies: List[ProxyData] = None):
         self.ACCOUNT_ID = account_id
         self.WORK_TYPE = work_type
-        self.PROCESS_QUEUE = process_queue
+        self.SHARED_DATA = shared_data
+        self.SHARED_PROXIES = shared_proxies
 
     async def run_task(self):
         self.AIOHTTP_SESSION = ClientSession()
-        if self.PROCESS_QUEUE:
+        if self.SHARED_DATA:
+            self.SHARED_DATA[Ut.FOR_STATS_MONITOR] = {self.ACCOUNT_ID: None}
+
             datetime_of_start = datetime.now(tz=Config.TIMEZONE).strftime(Config.DATETIME_FORMAT)
-            logger = await Ut.add_logging(datetime_of_start=datetime_of_start, process_id=0)
+            logger = await Ut.add_logging(datetime_of_start=datetime_of_start, process_id=self.ACCOUNT_ID)
             Config.logger = logger
 
             await connect_to_db(remove_data=False)
@@ -80,53 +82,25 @@ class BrowserProcessing:
         self.ACCOUNT_PROXY = ProxyData(host=host, port=port, username=username, password=password)
 
         if self.WORK_TYPE == WorkTypes.GET_TRUCKS_LIST:
-            return await self.get_trucks_info()
+            result = await self.get_trucks_info()
+            try:
+                await self.AIOHTTP_SESSION.close()
+
+            except Exception as ex:
+                Config.logger.warning(f"Не удалось успешно закрыть AIOHTTP SESSION!\nex: {ex}")
+
+            return result
 
         elif self.WORK_TYPE == WorkTypes.BOOKING_PROCESSING:
+            if not self.SHARED_PROXIES:
+                return Config.logger.critical("Не поступило SHARED PROXIES для мониторинга слотов! Завершаю работу...")
+
             loop = asyncio.get_event_loop()
             self.ASYNCIO_TASK = loop.create_task(self.processing_booking())
-            return await self.queue_messages_checker()
+            return await self.messages_checker()
 
         else:
             return None
-
-    async def add_auth_token_to_local_storage(self, retries: int = 3) -> bool:
-        try:
-            await self.PL_PAGE.goto("https://amurbooking.com/")
-            await self.PL_PAGE.evaluate(
-                "({ key, value }) => localStorage.setItem(key, value)",
-                {"key": "oktet-auth-token", "value": self.ACCOUNT_AUTH_TOKEN}
-            )
-            await asyncio.sleep(uniform(1, 2))
-
-            return True
-
-        except Exception as ex:
-            Config.logger.error(f"Не удалось добавить токен в local storage! Попыток: {retries}\nex: {ex}")
-
-            if retries:
-                return await self.add_auth_token_to_local_storage(retries=retries - 1)
-
-            return False
-
-    async def find_free_book_time(self) -> str:
-        start_tr = self.BOOKING_OBJ.book_date
-        end_tr = self.BOOKING_OBJ.book_date + timedelta(minutes=self.BOOKING_OBJ.time_duration)
-
-        while True:
-            await asyncio.sleep(uniform(0.300, 0.400))
-            result = await self.get_booking_data_per_day()
-            if not result:
-                continue
-
-            for slot_info in result:
-                try:
-                    if slot_info.availableToBook and start_tr <= slot_info.dateBooked <= end_tr:
-                        selected_time_text = slot_info.dateBooked.strftime("%H:%M")
-                        return selected_time_text
-
-                except Exception as ex:
-                    Config.logger.warning(f"Не удалось сравнить даты! ex: {ex}")
 
     async def processing_booking(self):
         try:
@@ -138,9 +112,9 @@ class BrowserProcessing:
             db_booking = db_booking[0]
             self.BOOKING_OBJ = db_booking
 
-            result = await self.get_booking_data_per_day()
+            result = await self.get_trucks_info()
             if not result:
-                Config.logger.error(f"Не удалось получить данные о времени!\nОтвет: {result}")
+                Config.logger.error(f"Не удалось сделать тестовый запрос о грозувиках!\nОтвет: {result}")
                 raise CancelledError()
 
             result = await self.get_new_browser_obj()
@@ -153,24 +127,12 @@ class BrowserProcessing:
                 Config.logger.error("Не удалось добавить токен в local_storage! Завершаю работу...")
                 raise CancelledError()
 
-            await self.PL_PAGE.goto("https://amurbooking.com/booking")
-            await self.PL_PAGE.wait_for_selector(".btn-lg", timeout=30000)
-            await self.PL_PAGE.locator(".btn-lg").first.click(timeout=10000)
-            await self.PL_PAGE.locator(".datepicker-input").wait_for(state="attached", timeout=30000)
+            result = await self.actions_to_slots_monitoring()
+            if not result:
+                Config.logger.error("Не удалось выполнить действия по форме до SLOTS_MONITORING! Завершаю работу...")
+                raise CancelledError()
 
-            await self.PL_PAGE.locator(".ng-input").first.click()
-            await self.PL_PAGE.get_by_text(self.BOOKING_OBJ.truck).click()
-
-            await self.PL_PAGE.locator("#cargoType").click()
-            await self.PL_PAGE.wait_for_selector(
-                f"xpath=//*[contains(normalize-space(), '{Config.GOOD_CHARACTERS[self.BOOKING_OBJ.good_character]}')]",
-                timeout=15000
-            )
-            await self.PL_PAGE.get_by_text(Config.GOOD_CHARACTERS[self.BOOKING_OBJ.good_character]).click()
-
-            await self.PL_PAGE.locator(".datepicker-input").click()
-
-            selected_time_text = await self.find_free_book_time()
+            selected_time_text = await self.slots_monitoring()
 
             await self.PL_PAGE.locator(".datepicker-input").fill(self.BOOKING_OBJ.book_date.strftime("%d.%m.%Y"))
             await self.PL_PAGE.locator(".form-control--time").click()
@@ -326,80 +288,94 @@ class BrowserProcessing:
             while True:
                 await asyncio.sleep(1000)
 
-    async def send_log_to_tg(self, log_text: str):
-        for uid in Config.ADMINS:
-            try:
-                text = [
-                    f"\n<b>{log_text}</b>"
-                ]
-                await Config.BOT.send_message(chat_id=uid, text="\n".join(text))
+    async def actions_to_slots_monitoring(self, retries: int = 3) -> bool:
+        try:
+            await self.PL_PAGE.goto("https://amurbooking.com/booking")
+            await self.PL_PAGE.wait_for_selector(".btn-lg", timeout=30000)
+            await self.PL_PAGE.locator(".btn-lg").first.click(timeout=10000)
+            await self.PL_PAGE.locator(".datepicker-input").wait_for(state="attached", timeout=30000)
 
-            except Exception as ex:
-                Config.logger.warning(f"Не удалось прислать лог в телеграм! user_id={uid}\n{ex}")
+            await self.PL_PAGE.locator(".ng-input").first.click()
+            await self.PL_PAGE.get_by_text(self.BOOKING_OBJ.truck).click()
 
-    async def get_booking_data_per_day(self, retries: int = 3) -> Union[List[BookingSlot], bool]:
+            await self.PL_PAGE.locator("#cargoType").click()
+            await self.PL_PAGE.wait_for_selector(
+                f"xpath=//*[contains(normalize-space(), '{Config.GOOD_CHARACTERS[self.BOOKING_OBJ.good_character]}')]",
+                timeout=15000
+            )
+            await self.PL_PAGE.get_by_text(Config.GOOD_CHARACTERS[self.BOOKING_OBJ.good_character]).click()
+            await self.PL_PAGE.locator(".datepicker-input").click()
+
+            return True
+
+        except Exception as ex:
+            Config.logger.error(f"Не удалось выполнить действия до SLOTS_MONITORING! Попыток: {retries}\nex: {ex}")
+
+            if retries:
+                await asyncio.sleep(3)
+                return await self.actions_to_slots_monitoring(retries=retries - 1)
+
+        return False
+
+    async def slots_monitoring(self) -> str:
+        start_tr = self.BOOKING_OBJ.book_date
+        end_tr = self.BOOKING_OBJ.book_date + timedelta(minutes=self.BOOKING_OBJ.time_duration)
+
+        while True:
+            for proxy in self.SHARED_PROXIES:
+                await asyncio.sleep(0.1)
+
+                result = await self.get_slots_data(proxy=proxy)
+                if not result:
+                    continue
+
+                for slot_info in result:
+                    try:
+                        if slot_info.availableToBook and start_tr <= slot_info.dateBooked <= end_tr:
+                            selected_time_text = slot_info.dateBooked.strftime("%H:%M")
+                            return selected_time_text
+
+                    except Exception as ex:
+                        Config.logger.warning(f"Не удалось сравнить даты! ex: {ex}")
+
+    async def get_slots_data(self, proxy: ProxyData, retries: int = 3) -> Union[List[BookingSlot], bool]:
         headers = deepcopy(self.DEFAULT_HEADERS)
         headers["referer"] = "https://amurbooking.com/booking"
 
-        if not self.ACCOUNT_AUTH_TOKEN:
-            if not await self.auth():
-                return False
-
-        headers["authorization"] = self.ACCOUNT_AUTH_TOKEN
         date = self.BOOKING_OBJ.book_date.strftime("%Y-%m-%d")
 
         try:
             async with self.AIOHTTP_SESSION.get(
                     url=f"https://amurbooking.com/oktet/api/v1/booking/time-slots?date={date}",
                     headers=headers,
-                    proxy=f"http://{self.ACCOUNT_PROXY.host}:{self.ACCOUNT_PROXY.port}",
-                    proxy_auth=BasicAuth(login=self.ACCOUNT_PROXY.username, password=self.ACCOUNT_PROXY.password) \
-                            if self.ACCOUNT_PROXY.username else None,
+                    proxy=f"http://{proxy.host}:{proxy.port}",
+                    proxy_auth=BasicAuth(login=proxy.username, password=proxy.password) if proxy.username else None,
                     timeout=20
             ) as response:
-                if response.status == 200:
-                    answer = json.loads(await response.text())
+                answer = await self.processing_response(response=response, prefix="slots")
+                if not answer:
+                    raise Exception("Answer is False!")
 
-                    try:
-                        validated_slots: List[BookingSlot] = [BookingSlot.model_validate(item) for item in answer]
+                try:
+                    validated_slots: List[BookingSlot] = [BookingSlot.model_validate(item) for item in answer]
 
-                        Config.logger.info("Получил данные о времени!")
-                        return validated_slots
+                    Config.logger.info("Получил данные о времени!")
+                    return validated_slots
 
-                    except ValidationError as ex:
-                        Config.logger.error(f"Ответ с данных о времени не прошел валидацию! ex: {ex}")
+                except ValidationError as ex:
+                    Config.logger.error(f"Ответ с данных о времени не прошел валидацию! ex: {ex}")
+                    raise Exception("Answer hasn't been validated!")
 
-                elif response.status == 401:
-                    Config.logger.error(f"Не удалось получить данные о времени! Пробую пройти авторизацию...\n")
-                    await self.auth()
-
-                else:
-                    Config.logger.error(
-                        f"Не удалось получить данные о временеи!"
-                        f"\nкод={response.status}\nответ: {await response.text()}"
-                    )
-
-                if retries:
-                    await asyncio.sleep(5)
-                    return await self.get_booking_data_per_day(retries=retries - 1)
-
-                Config.logger.error(
-                    f"Попытки для получения данных о времени закончились!"
-                    f"\nкод={response.status}\nответ: {await response.text()}"
-                )
-                return False
-
-        except Exception:
-            Config.logger.error(traceback.format_exc())
-            await asyncio.sleep(5)
+        except Exception as ex:
+            Config.logger.error(f"Не удалось получить данные о слотах! Попыток: {retries}\nex: {ex}")
 
             if retries:
-                return await self.get_booking_data_per_day(retries=retries - 1)
+                await asyncio.sleep(5)
+                return await self.get_slots_data(proxy=proxy, retries=retries - 1)
 
-            return False
+        return False
 
-
-    async def get_trucks_info(self, retries: int = 3):
+    async def get_trucks_info(self, retries: int = 3) -> Union[List[str], bool]:
         headers = deepcopy(self.DEFAULT_HEADERS)
         headers["referer"] = "https://amurbooking.com/lk"
 
@@ -408,39 +384,47 @@ class BrowserProcessing:
                 return False
 
         headers["authorization"] = self.ACCOUNT_AUTH_TOKEN
-        async with self.AIOHTTP_SESSION.get(
-                url="https://amurbooking.com/oktet/api/v1/vehicle/current-user?page=0&size=10&sort=model,ASC",
-                headers=headers,
-                proxy=f"http://{self.ACCOUNT_PROXY.host}:{self.ACCOUNT_PROXY.port}",
-                proxy_auth=BasicAuth(login=self.ACCOUNT_PROXY.username, password=self.ACCOUNT_PROXY.password) \
-                        if self.ACCOUNT_PROXY.username else None,
-                timeout=20
-        ) as response:
-            if response.status == 200:
-                answer = json.loads(await response.text())
-                await self.AIOHTTP_SESSION.close()
+
+        try:
+            async with self.AIOHTTP_SESSION.get(
+                    url="https://amurbooking.com/oktet/api/v1/vehicle/current-user?page=0&size=10&sort=model,ASC",
+                    headers=headers,
+                    proxy=f"http://{self.ACCOUNT_PROXY.host}:{self.ACCOUNT_PROXY.port}",
+                    proxy_auth=BasicAuth(login=self.ACCOUNT_PROXY.username, password=self.ACCOUNT_PROXY.password) \
+                            if self.ACCOUNT_PROXY.username else None,
+                    timeout=20
+            ) as response:
+                answer = await self.processing_response(response=response, prefix="trucks")
+                if not answer:
+                    raise Exception("Answer is False!")
+
                 return [f"{car_data['model']} / {car_data['registrationPlate']}" for car_data in answer["content"]]
 
-            elif response.status == 401:
-                Config.logger.error(f"Не удалось получить данные о грузовиках! Пробую пройти авторизацию...")
-                await self.auth()
-
-            else:
-                Config.logger.error(
-                    f"Не удалось получить данные о грузовиках!"
-                    f"\nкод={response.status}\nответ: {await response.text()}"
-                )
+        except Exception as ex:
+            Config.logger.error(f"Не удалось получить данные о грузовиках! Попыток: {retries}\nex: {ex}")
 
             if retries:
                 await asyncio.sleep(5)
                 return await self.get_trucks_info(retries=retries - 1)
 
-            Config.logger.error(
-                f"Попытки для получения данных о грузовиках закончились!"
-                f"\nкод={response.status}\nответ: {await response.text()}"
-            )
-            await self.AIOHTTP_SESSION.close()
-            return False
+        return False
+
+    async def processing_response(self, response, prefix: str) -> Union[Dict, bool]:
+        if response.status == 200:
+            try:
+                return json.loads(await response.text())
+
+            except Exception as ex:
+                Config.logger.error(f"{prefix} | Не смог подгрузить JSON ответ!")
+
+        elif response.status == 401:
+            Config.logger.error(f"{prefix} | Статус код ответа - 401! Пробую пройти авторизацию...")
+            await self.auth()
+
+        else:
+            Config.logger.error(f"{prefix} | Статус код ответа - {response.status}!")
+
+        return False
 
     async def auth(self, retries: int = 3) -> bool:
         headers = deepcopy(self.DEFAULT_HEADERS)
@@ -478,29 +462,24 @@ class BrowserProcessing:
             Config.logger.error("Попытки для входа в аккаунт закончились!")
             return False
 
-    async def close_session_objects(self):
-        if self.PL_BROWSER is not None:
-            try:
-                await self.PL_BROWSER.close()
-                Config.logger.info("Закрыл старый браузер")
+    async def add_auth_token_to_local_storage(self, retries: int = 3) -> bool:
+        try:
+            await self.PL_PAGE.goto("https://amurbooking.com/")
+            await self.PL_PAGE.evaluate(
+                "({ key, value }) => localStorage.setItem(key, value)",
+                {"key": "oktet-auth-token", "value": self.ACCOUNT_AUTH_TOKEN}
+            )
+            await asyncio.sleep(uniform(1, 2))
 
-            except Exception as ex:
-                Config.logger.warning(f"Не удалось закрыть PL_BROWSER. ex: {ex}")
+            return True
 
-        if self.PL_OBJ is not None:
-            try:
-                await self.PL_OBJ.stop()
-                Config.logger.info("Остановил старый playwright_obj")
+        except Exception as ex:
+            Config.logger.error(f"Не удалось добавить токен в local storage! Попыток: {retries}\nex: {ex}")
 
-            except Exception as ex:
-                Config.logger.warning(f"Не удалось остановить PL_OBJ. ex: {ex}")
+            if retries:
+                return await self.add_auth_token_to_local_storage(retries=retries - 1)
 
-        if self.AIOHTTP_SESSION:
-            try:
-                await self.AIOHTTP_SESSION.close()
-
-            except Exception as ex:
-                Config.logger.warning(f"Ошибка при закрытии AIOHTTP сессии! ex: {ex}")
+            return False
 
     async def get_new_browser_obj(self, retries: int = 3) -> bool:
         Config.logger.info("Пробую получить новый браузер...")
@@ -541,18 +520,20 @@ class BrowserProcessing:
 
             return False
 
-    async def queue_messages_checker(self):
+    async def messages_checker(self):
         Config.logger.info(f"Чекер сообщений запущен! Процесс обработки записи №")
 
         while True:
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.1)
 
-            msg = await Ut.get_message_from_queue(self.PROCESS_QUEUE)
-            if msg is None:
+            messages = self.SHARED_DATA.get(self.ACCOUNT_ID)
+            if messages is None:
                 continue
 
+            s_msg = messages[0]
+
             Config.logger.info(f"Получил queue message в процесс обработки записи №")
-            if msg.msg_type == Ut.STOP_PROCESS:
+            if s_msg.msg_type == Ut.STOP_PROCESS:
                 Config.logger.info("Останавливаю процесс...")
 
                 if not self.ASYNCIO_TASK.done():
@@ -562,4 +543,41 @@ class BrowserProcessing:
                     Config.logger.info("Ожидаю закрытия сессий...")
                     await asyncio.sleep(1)
 
+                self.SHARED_DATA.pop(self.ACCOUNT_ID)
                 return None
+
+    async def close_session_objects(self):
+        if self.PL_BROWSER is not None:
+            try:
+                await self.PL_BROWSER.close()
+                Config.logger.info("Закрыл старый браузер")
+
+            except Exception as ex:
+                Config.logger.warning(f"Не удалось закрыть PL_BROWSER. ex: {ex}")
+
+        if self.PL_OBJ is not None:
+            try:
+                await self.PL_OBJ.stop()
+                Config.logger.info("Остановил старый playwright_obj")
+
+            except Exception as ex:
+                Config.logger.warning(f"Не удалось остановить PL_OBJ. ex: {ex}")
+
+        if self.AIOHTTP_SESSION:
+            try:
+                await self.AIOHTTP_SESSION.close()
+
+            except Exception as ex:
+                Config.logger.warning(f"Ошибка при закрытии AIOHTTP сессии! ex: {ex}")
+
+    @staticmethod
+    async def send_log_to_tg(log_text: str):
+        for uid in Config.ADMINS:
+            try:
+                text = [
+                    f"\n<b>{log_text}</b>"
+                ]
+                await Config.BOT.send_message(chat_id=uid, text="\n".join(text))
+
+            except Exception as ex:
+                Config.logger.warning(f"Не удалось прислать лог в телеграм! user_id={uid}\n{ex}")

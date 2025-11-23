@@ -1,5 +1,6 @@
 import asyncio
 from datetime import datetime
+from multiprocessing import Manager
 
 from aiogram.types import BotCommand
 
@@ -22,12 +23,12 @@ async def main():
 
     if Config.USE_PROXY:
         input_proxies = await Ut.load_proxies()
-        if not input_proxies:
-            Config.logger.error("Не нашел прокси-адресов в proxies.txt! Завершаю работу...")
+        if (not input_proxies[Config.PRIVATE_PROXIES]) or (not input_proxies[Config.SHARED_PROXIES]):
+            Config.logger.error("Нету необходимых прокси-адресов в private и shared прокси! Завершаю работу...")
             return
 
         Config.INPUT_PROXIES = input_proxies
-        Config.logger.info(f"Подгрузил proxies.txt! Количество прокси: {len(input_proxies)}")
+        Config.logger.info(f"Подгрузил прокси!")
 
     bot_commands = [
         BotCommand(command="start", description="Стартовое меню"),
@@ -36,11 +37,15 @@ async def main():
     ]
     await Config.BOT.set_my_commands(commands=bot_commands)
 
-    loop = asyncio.get_event_loop()
-    loop.create_task(bookings_checker())
+    with Manager() as manager:
+        shared_data = manager.dict()
+        shared_data[Ut.FOR_STATS_MONITOR] = {}
 
-    await Config.BOT.delete_webhook(drop_pending_updates=True)
-    await Config.DISPATCHER.start_polling(Config.BOT, allowed_updates=Config.DISPATCHER.resolve_used_update_types())
+        loop = asyncio.get_event_loop()
+        loop.create_task(bookings_checker(shared_data))
+
+        await Config.BOT.delete_webhook(drop_pending_updates=True)
+        await Config.DISPATCHER.start_polling(Config.BOT, allowed_updates=Config.DISPATCHER.resolve_used_update_types())
 
 
 if __name__ == "__main__":

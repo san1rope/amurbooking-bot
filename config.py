@@ -1,7 +1,7 @@
 import os
 from logging import Logger
 from pathlib import Path
-from typing import Optional, List
+from typing import Optional, List, Dict
 
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
@@ -26,13 +26,17 @@ class Config:
     TIMEZONE = timezone(os.getenv("TIMEZONE").strip())
     USE_PROXY: bool = int(os.getenv("USE_PROXY").strip())
 
-    INPUT_PROXIES: Optional[List] = None
+    INPUT_PROXIES: Optional[Dict[str, List]] = None
+    PRIVATE_PROXIES = "private"
+    SHARED_PROXIES = "shared"
+    PROXIES_FILEPATH = {
+        SHARED_PROXIES: Path(os.path.abspath("proxies_shared.txt")),
+        PRIVATE_PROXIES: Path(os.path.abspath("proxies_private.txt"))
+    }
 
     logger: Optional[Logger] = None
     LOGGING_DIR = Path(os.path.abspath("logs"))
     DATETIME_FORMAT = "%d-%m-%Y_%H-%M-%S"
-
-    PROXIES_FILEPATH = Path(os.path.abspath("proxies.txt"))
 
     DATABASE_CLEANUP = bool(int(os.getenv("DATABASE_CLEANUP")))
     DB_USER = os.getenv("DB_USER").strip()
