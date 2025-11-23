@@ -63,6 +63,9 @@ class BrowserProcessing:
         self.SHARED_PROXIES = shared_proxies
 
     async def run_task(self):
+        proxies = await Ut.load_proxies()
+        Config.INPUT_PROXIES = proxies
+
         self.AIOHTTP_SESSION = ClientSession()
         if self.SHARED_DATA:
             self.SHARED_DATA[Ut.FOR_STATS_MONITOR] = {self.ACCOUNT_ID: None}
@@ -74,6 +77,28 @@ class BrowserProcessing:
             await connect_to_db(remove_data=False)
 
         db_account = await DbAccount(db_id=self.ACCOUNT_ID).select()
+        if not db_account:
+            return Config.logger.error("Не нашел аккаунта в бд! Завершаю работу...")
+
+        flag = True
+        if db_account.proxy:
+            for i in Config.INPUT_PROXIES[Config.PRIVATE_PROXIES]:
+                if str(db_account.proxy) == str(i):
+                    flag = False
+                    break
+
+        if flag:
+            Config.logger.info("Ищу новый PRIVATE прокси...")
+            selected_proxy = await Ut.get_new_proxy_to_account(account_id=self.ACCOUNT_ID)
+            if not selected_proxy:
+                return Config.logger.critical("Не нашел свободных PRIVATE прокси! Завершаю работу...")
+
+            result = await DbAccount(db_id=db_account.id).update(proxy=str(selected_proxy))
+            if not result:
+                return Config.logger.error("Не удалось обновить proxy в accounts! Завершаю работу")
+
+            Config.logger.info(f"Успешо сменил PRIVATE прокси на {selected_proxy}!")
+
         self.ACCOUNT_PHONE = db_account.phone
         self.ACCOUNT_PASSWORD = db_account.password
         self.ACCOUNT_AUTH_TOKEN = db_account.auth_token
@@ -261,14 +286,13 @@ class BrowserProcessing:
             print("кликнул!")
 
             print("ПОЙМАЛ ")
-            # await self.PL_PAGE.screenshot(path="temp124.png")
 
-            # for uid in Config.ADMINS:
-            #     try:
-            #         await Config.BOT.send_message(chat_id=uid, text=f"ПОЙМАЛ booking = {db_booking.id}")
-            #
-            #     except Exception:
-            #         print(f"не смог отправить сообщение {uid}")
+            for uid in Config.ADMINS:
+                try:
+                    await Config.BOT.send_message(chat_id=uid, text=f"ПОЙМАЛ booking = {db_booking.id}")
+
+                except Exception:
+                    print(f"не смог отправить сообщение {uid}")
 
             await DbBooking(db_id=db_booking.id).update(status=2)
             raise CancelledError()

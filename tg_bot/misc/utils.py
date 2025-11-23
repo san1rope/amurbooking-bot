@@ -10,7 +10,7 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import InlineKeyboardMarkup
 
 from config import Config
-from tg_bot.db_models.quick_commands import DbMessageId
+from tg_bot.db_models.quick_commands import DbMessageId, DbAccount
 from tg_bot.db_models.schemas import MessageId
 from tg_bot.misc.models import ProxyData
 
@@ -23,6 +23,24 @@ class Utils:
     FOR_STATS_MONITOR = "for_start_monitor"
 
     STOP_PROCESS = "stop_process"
+
+    @staticmethod
+    async def get_new_proxy_to_account(account_id: Optional[int] = None, current_proxy: Optional[ProxyData] = None) \
+            -> Union[ProxyData, bool]:
+        if account_id:
+            db_account = await DbAccount(db_id=account_id).select()
+            if db_account:
+                current_proxy = db_account.proxy
+
+        accounts_with_proxy = await DbAccount().select(proxy_not_none=True)
+        attached_proxies = [acc.proxy for acc in accounts_with_proxy]
+        for proxy_obj in Config.INPUT_PROXIES[Config.PRIVATE_PROXIES]:
+            if str(proxy_obj) in attached_proxies or str(current_proxy) == str(proxy_obj):
+                continue
+
+            return proxy_obj
+
+        return False
 
     @staticmethod
     async def send_step_message(user_id: int, text: str, markup: Optional[InlineKeyboardMarkup] = None):

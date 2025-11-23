@@ -227,17 +227,18 @@ async def confirm_add_account(callback: types.CallbackQuery, state: FSMContext):
 
     data = await state.get_data()
 
-    accounts_with_proxy = await DbAccount().select(proxy_not_none=True)
-    attached_proxies = [acc.proxy for acc in accounts_with_proxy]
+    # accounts_with_proxy = await DbAccount().select(proxy_not_none=True)
+    # attached_proxies = [acc.proxy for acc in accounts_with_proxy]
+    #
+    # selected_proxy = None
+    # for proxy_obj in Config.INPUT_PROXIES[Config.PRIVATE_PROXIES]:
+    #     if str(proxy_obj) in attached_proxies:
+    #         continue
+    #
+    #     selected_proxy = str(proxy_obj)
+    #     break
 
-    selected_proxy = None
-    for proxy_obj in Config.INPUT_PROXIES[Config.PRIVATE_PROXIES]:
-        if str(proxy_obj) in attached_proxies:
-            continue
-
-        selected_proxy = str(proxy_obj)
-        break
-
+    selected_proxy = await Ut.get_new_proxy_to_account()
     if not selected_proxy:
         text = [
             "<b>⚠️ Недостаточно прокси на этот аккаунт!</b>",
@@ -247,7 +248,7 @@ async def confirm_add_account(callback: types.CallbackQuery, state: FSMContext):
         await state.clear()
         return
 
-    result = await DbAccount(phone=data['phone'], password=data['password'], proxy=selected_proxy).add()
+    result = await DbAccount(phone=data['phone'], password=data['password'], proxy=str(selected_proxy)).add()
     if result:
         text = [
             "<b>➕ Добавление аккаунта</b>",
