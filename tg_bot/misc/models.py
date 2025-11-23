@@ -25,6 +25,7 @@ class ProxyData(BaseModel):
     username: Optional[str] = None
     password: Optional[str] = None
     available: bool = True
+    current_task: int = 0
 
     def __str__(self):
         return f"{self.host}:{self.port}:{self.username}:{self.password}"

@@ -25,6 +25,7 @@ class Config:
     ADMINS = list(map(int, os.getenv("ADMINS").strip().split(",")))
     TIMEZONE = timezone(os.getenv("TIMEZONE").strip())
     USE_PROXY: bool = int(os.getenv("USE_PROXY").strip())
+    SHARED_PROXIES_FOR_TASK: int = int(os.getenv("SHARED_PROXIES_FOR_TASK").strip())
 
     INPUT_PROXIES: Optional[Dict[str, List]] = {}
     PRIVATE_PROXIES = "private"

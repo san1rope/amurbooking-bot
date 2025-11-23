@@ -282,7 +282,7 @@ class BrowserProcessing:
             await button_locator.wait_for(state="visible", timeout=30000)
             print("дождался!")
             await asyncio.sleep(uniform(0.2, 0.25))
-            # await button_locator.click(timeout=5_000)
+            await button_locator.click(timeout=5_000)
             print("кликнул!")
 
             print("ПОЙМАЛ ")
