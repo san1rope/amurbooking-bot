@@ -7,6 +7,7 @@ from aiogram.types import BotCommand
 from config import Config
 from tg_bot.db_models.db_gino import connect_to_db
 from tg_bot.handlers import routers
+from tg_bot.middlewares.access_restriction import AccessRestriction
 from tg_bot.misc.bookings_status import bookings_checker
 from tg_bot.misc.utils import Utils as Ut
 
@@ -18,6 +19,7 @@ async def main():
 
     await connect_to_db(remove_data=Config.DATABASE_CLEANUP)
 
+    Config.DISPATCHER.message.outer_middleware(AccessRestriction())
     if routers:
         Config.DISPATCHER.include_routers(*routers)
 
