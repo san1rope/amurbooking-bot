@@ -26,7 +26,7 @@ class Config:
     TIMEZONE = timezone(os.getenv("TIMEZONE").strip())
     USE_PROXY: bool = int(os.getenv("USE_PROXY").strip())
 
-    INPUT_PROXIES: Optional[Dict[str, List]] = None
+    INPUT_PROXIES: Optional[Dict[str, List]] = {}
     PRIVATE_PROXIES = "private"
     SHARED_PROXIES = "shared"
     PROXIES_FILEPATH = {
@@ -56,3 +56,5 @@ class Config:
         2: "Выполнена",
         3: "Не удалось поймать"
     }
+
+    SHARED_DATA = None

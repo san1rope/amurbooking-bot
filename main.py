@@ -39,7 +39,7 @@ async def main():
 
     with Manager() as manager:
         shared_data = manager.dict()
-        shared_data[Ut.FOR_STATS_MONITOR] = {}
+        Config.SHARED_DATA = shared_data
 
         loop = asyncio.get_event_loop()
         loop.create_task(bookings_checker(shared_data))

@@ -231,7 +231,7 @@ async def confirm_add_account(callback: types.CallbackQuery, state: FSMContext):
     attached_proxies = [acc.proxy for acc in accounts_with_proxy]
 
     selected_proxy = None
-    for proxy_obj in Config.INPUT_PROXIES:
+    for proxy_obj in Config.INPUT_PROXIES[Config.PRIVATE_PROXIES]:
         if str(proxy_obj) in attached_proxies:
             continue
 

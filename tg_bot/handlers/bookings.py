@@ -324,7 +324,8 @@ async def select_account(callback: types.CallbackQuery, state: FSMContext,
 
     data = await state.get_data()
 
-    trucks_list = await BrowserProcessing(account_id=data["account_id"], work_type=WorkTypes.GET_TRUCKS_LIST).run_task()
+    trucks_list = await BrowserProcessing(account_id=data["account_id"], work_type=WorkTypes.GET_TRUCKS_LIST,
+                                          shared_data=Config.SHARED_DATA).run_task()
 
     db_acc = await DbAccount(db_id=data["account_id"]).select()
     text = [

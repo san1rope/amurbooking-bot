@@ -257,18 +257,18 @@ class BrowserProcessing:
             await button_locator.wait_for(state="visible", timeout=30000)
             print("дождался!")
             await asyncio.sleep(uniform(0.2, 0.25))
-            await button_locator.click(timeout=5_000)
+            # await button_locator.click(timeout=5_000)
             print("кликнул!")
 
             print("ПОЙМАЛ ")
             # await self.PL_PAGE.screenshot(path="temp124.png")
 
-            for uid in Config.ADMINS:
-                try:
-                    await Config.BOT.send_message(chat_id=uid, text=f"ПОЙМАЛ booking = {db_booking.id}")
-
-                except Exception:
-                    print(f"не смог отправить сообщение {uid}")
+            # for uid in Config.ADMINS:
+            #     try:
+            #         await Config.BOT.send_message(chat_id=uid, text=f"ПОЙМАЛ booking = {db_booking.id}")
+            #
+            #     except Exception:
+            #         print(f"не смог отправить сообщение {uid}")
 
             await DbBooking(db_id=db_booking.id).update(status=2)
             raise CancelledError()
@@ -527,7 +527,7 @@ class BrowserProcessing:
             await asyncio.sleep(0.1)
 
             messages = self.SHARED_DATA.get(self.ACCOUNT_ID)
-            if messages is None:
+            if not messages:
                 continue
 
             s_msg = messages[0]

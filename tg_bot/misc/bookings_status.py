@@ -20,7 +20,7 @@ async def bookings_checker(shared_data):
             for booking in db_bookings_0:
                 booking_proc = BOOKING_PROCESSES.get(booking.account_id)
                 if (booking_proc is not None) and booking_proc.is_alive():
-                    shared_data[booking].append(QueueMessage(msg_type=Ut.STOP_PROCESS))
+                    shared_data[booking.account_id].append(QueueMessage(msg_type=Ut.STOP_PROCESS))
                     Config.logger.info(f"Послал запрос на завершение процесса обработки записи №{booking.id}!")
 
                 if booking.account_id in BOOKING_PROCESSES:
@@ -37,7 +37,7 @@ async def bookings_checker(shared_data):
                         target=Ut.wrapper,
                         args=(BrowserProcessing(
                             work_type=WorkTypes.BOOKING_PROCESSING, account_id=booking.account_id,
-                            shared_data=shared_data, shared_proxies=Config.INPUT_PROXIES
+                            shared_data=shared_data, shared_proxies=Config.INPUT_PROXIES[Config.SHARED_PROXIES]  # temp
                         ).run_task,)
                     )
                     new_proc.start()
