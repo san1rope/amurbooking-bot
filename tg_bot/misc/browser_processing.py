@@ -295,6 +295,8 @@ class BrowserProcessing:
 
             print("ПОЙМАЛ ")
 
+            await self.PL_PAGE.screenshot(path="save123.png")
+
             for uid in Config.ADMINS:
                 try:
                     await Config.BOT.send_message(chat_id=uid, text=f"ПОЙМАЛ booking = {db_booking.id}")
