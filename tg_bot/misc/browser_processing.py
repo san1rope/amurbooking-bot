@@ -74,7 +74,12 @@ class BrowserProcessing:
             logger = await Ut.add_logging(datetime_of_start=datetime_of_start, process_id=self.ACCOUNT_ID)
             Config.logger = logger
 
-            await connect_to_db(remove_data=False)
+            try:
+                await connect_to_db(remove_data=False)
+
+            except Exception:
+                print(traceback.format_exc())
+                return
 
         db_account = await DbAccount(db_id=self.ACCOUNT_ID).select()
         if not db_account:
@@ -428,7 +433,7 @@ class BrowserProcessing:
                 return [f"{car_data['model']} / {car_data['registrationPlate']}" for car_data in answer["content"]]
 
         except Exception as ex:
-            Config.logger.error(f"Не удалось получить данные о грузовиках! Попыток: {retries}\nex: {ex}")
+            Config.logger.error(f"Не удалось получить данные о грузовиках! Попыток: {retries}\nex: {traceback.format_exc()}")
 
             if retries:
                 await asyncio.sleep(5)
