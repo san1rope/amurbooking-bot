@@ -214,10 +214,11 @@ class BrowserProcessing:
                     return False
 
                 async with ClientSession() as session:
-                    proxy = "http://31.59.236.40:59100"
-                    proxy_auth = BasicAuth("valetinles", "f5bay87SBb")
+                    proxy = f"http://{self.ACCOUNT_PROXY.host}:{self.ACCOUNT_PROXY.port}"
+                    proxy_auth = BasicAuth(self.ACCOUNT_PROXY.username, self.ACCOUNT_PROXY.password)
                     async with session.get(url=src, proxy=proxy, proxy_auth=proxy_auth) as resp:
                         img_bytes = await resp.read()
+
                     img_b64 = base64.b64encode(img_bytes).decode("utf-8")
 
                     data_post = {
