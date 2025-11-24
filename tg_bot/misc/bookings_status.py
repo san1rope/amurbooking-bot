@@ -5,7 +5,7 @@ from multiprocessing import Process
 from config import Config
 from tg_bot.db_models.quick_commands import DbBooking
 from tg_bot.misc.browser_processing import BrowserProcessing
-from tg_bot.misc.models import WorkTypes, QueueMessage
+from tg_bot.misc.models import WorkTypes
 from tg_bot.misc.utils import BOOKING_PROCESSES, Utils as Ut
 
 
