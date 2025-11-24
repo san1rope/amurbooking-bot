@@ -268,7 +268,7 @@ class BrowserProcessing:
                 await submit_btn.click()
 
                 hint = frame.locator(".Textinput-Hint")
-                await asyncio.sleep(5)
+                await asyncio.sleep(0.5)
                 try:
                     await hint.wait_for(state="attached", timeout=5_000)
                     style = await hint.get_attribute("style") or ""
