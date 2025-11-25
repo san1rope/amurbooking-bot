@@ -297,7 +297,7 @@ class BrowserProcessing:
 
             print("ПОЙМАЛ ")
 
-            await self.PL_PAGE.screenshot(path="save123.png")
+            await self.PL_PAGE.screenshot(path=f"save_{self.ACCOUNT_ID}.png")
 
             for uid in Config.ADMINS:
                 try:
@@ -305,6 +305,9 @@ class BrowserProcessing:
 
                 except Exception:
                     print(f"не смог отправить сообщение {uid}")
+
+            await asyncio.sleep(5)
+            await self.PL_PAGE.screenshot(path=f"save2_{self.ACCOUNT_ID}.png")
 
             await DbBooking(db_id=db_booking.id).update(status=2)
             raise CancelledError()
